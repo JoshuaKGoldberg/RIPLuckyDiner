@@ -8,11 +8,9 @@
 /// <reference path="GroupHoldr-0.2.1.ts" />
 /// <reference path="InputWritr-0.2.0.ts" />
 /// <reference path="ItemsHoldr-0.2.1.ts" />
-/// <reference path="LevelEditr-0.2.0.ts" />
 /// <reference path="MapsCreatr-0.2.1.ts" />
 /// <reference path="MapScreenr-0.2.1.ts" />
 /// <reference path="MathDecidr-0.2.0.ts" />
-/// <reference path="ModAttachr-0.2.2.ts" />
 /// <reference path="NumberMakr-0.2.2.ts" />
 /// <reference path="ObjectMakr-0.2.2.ts" />
 /// <reference path="PixelDrawr-0.2.0.ts" />
@@ -23,10 +21,7 @@
 /// <reference path="ThingHittr-0.2.0.ts" />
 /// <reference path="TimeHandlr-0.2.0.ts" />
 /// <reference path="TouchPassr-0.2.0.ts" />
-/// <reference path="UsageHelpr-0.2.0.ts" />
 /// <reference path="UserWrappr-0.2.0.ts" />
-/// <reference path="WorldSeedr-0.2.0.ts" />
-/// <reference path="js_beautify.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -57,7 +52,6 @@ var GameStartr;
              * in order of when they should be called.
              */
             this.resets = [
-                "resetUsageHelper",
                 "resetObjectMaker",
                 "resetPixelRender",
                 "resetTimeHandler",
@@ -75,12 +69,8 @@ var GameStartr;
                 "resetInputWriter",
                 "resetDeviceLayer",
                 "resetTouchPasser",
-                "resetLevelEditor",
-                "resetWorldSeeder",
                 "resetScenePlayer",
                 "resetMathDecider",
-                "resetModAttacher",
-                "startModAttacher",
                 "resetContainer"
             ];
             if (settings.extraResets) {
@@ -113,15 +103,6 @@ var GameStartr;
          */
         GameStartr.prototype.resetTimed = function (GameStarter, settings) {
             _super.prototype.resetTimed.call(this, GameStarter, GameStarter.resets, settings);
-        };
-        /**
-         * Sets this.UsageHelper.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        GameStartr.prototype.resetUsageHelper = function (GameStarter, settings) {
-            GameStarter.UsageHelper = new UsageHelpr.UsageHelpr(GameStarter.settings.help);
         };
         /**
          * Sets this.ObjectMaker.
@@ -357,30 +338,6 @@ var GameStartr;
             }, GameStarter.settings.touch));
         };
         /**
-         * Sets this.LevelEditor.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        GameStartr.prototype.resetLevelEditor = function (GameStarter, settings) {
-            GameStarter.LevelEditor = new LevelEditr.LevelEditr(GameStarter.proliferate({
-                "GameStarter": GameStarter,
-                "beautifier": js_beautify
-            }, GameStarter.settings.editor));
-        };
-        /**
-         * Sets this.WorldSeeder.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        GameStartr.prototype.resetWorldSeeder = function (GameStarter, settings) {
-            GameStarter.WorldSeeder = new WorldSeedr.WorldSeedr(GameStarter.proliferate({
-                "random": GameStarter.NumberMaker.random.bind(GameStarter.NumberMaker),
-                "onPlacement": GameStarter.mapPlaceRandomCommands.bind(GameStarter, GameStarter)
-            }, GameStarter.settings.generator));
-        };
-        /**
          * Sets this.ScenePlayer.
          *
          * @param GameStarter
@@ -399,36 +356,6 @@ var GameStartr;
          */
         GameStartr.prototype.resetMathDecider = function (GameStarter, settings) {
             GameStarter.MathDecider = new MathDecidr.MathDecidr(GameStarter.settings.math);
-        };
-        /**
-         * Sets this.ModAttacher.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        GameStartr.prototype.resetModAttacher = function (GameStarter, settings) {
-            GameStarter.ModAttacher = new ModAttachr.ModAttachr(GameStarter.proliferate({
-                "scopeDefault": GameStarter,
-                "ItemsHoldr": GameStarter.ItemsHolder
-            }, GameStarter.settings.mods));
-        };
-        /**
-         * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
-         * is fired.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        GameStartr.prototype.startModAttacher = function (GameStarter, settings) {
-            var mods = settings.mods, i;
-            if (mods) {
-                for (i in mods) {
-                    if (mods.hasOwnProperty(i) && mods[i]) {
-                        GameStarter.ModAttacher.enableMod(i);
-                    }
-                }
-            }
-            GameStarter.ModAttacher.fireEvent("onReady", GameStarter, GameStarter);
         };
         /**
          * Resets the parent HTML container. Width and height are set by customs,
@@ -556,7 +483,6 @@ var GameStartr;
             if (thing.onThingAdded) {
                 thing.onThingAdded(thing);
             }
-            thing.GameStarter.ModAttacher.fireEvent("onAddThing", thing, left, top);
             return thing;
         };
         /**
@@ -632,8 +558,6 @@ var GameStartr;
             if (thing.flipVert) {
                 thing.GameStarter.flipVert(thing);
             }
-            // Mods!
-            thing.GameStarter.ModAttacher.fireEvent("onThingMake", thing.GameStarter, thing, title, settings, defaults);
         };
         /**
          * Processes additional Thing attributes. For each attribute the Thing's
@@ -662,28 +586,6 @@ var GameStartr;
             }
         };
         /**
-         * Runs through commands generated by a WorldSeedr and evaluates all of
-         * to create PreThings via MapsCreator.analyzePreSwitch.
-         *
-         * @param GameStarter
-         * @param generatedCommands   Commands generated by WorldSeedr.generateFull.
-         */
-        GameStartr.prototype.mapPlaceRandomCommands = function (GameStarter, generatedCommands) {
-            var MapsCreator = GameStarter.MapsCreator, AreaSpawner = GameStarter.AreaSpawner, prethings = AreaSpawner.getPreThings(), area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), command, output, i;
-            for (i = 0; i < generatedCommands.length; i += 1) {
-                command = generatedCommands[i];
-                output = {
-                    "thing": command.title,
-                    "x": command.left,
-                    "y": command.top
-                };
-                if (command.arguments) {
-                    GameStarter.proliferateHard(output, command.arguments, true);
-                }
-                MapsCreator.analyzePreSwitch(output, prethings, area, map);
-            }
-        };
-        /**
          * Triggered Function for when the game is unpaused. Music resumes, and
          * the mod event is fired.
          *
@@ -691,7 +593,6 @@ var GameStartr;
          */
         GameStartr.prototype.onGamePlay = function (GameStarter) {
             GameStarter.AudioPlayer.resumeAll();
-            GameStarter.ModAttacher.fireEvent("onGamePlay");
         };
         /**
          * Triggered Function for when the game is paused. Music stops, and the
@@ -701,7 +602,6 @@ var GameStartr;
          */
         GameStartr.prototype.onGamePause = function (GameStarter) {
             GameStarter.AudioPlayer.pauseAll();
-            GameStarter.ModAttacher.fireEvent("onGamePause");
         };
         /**
          * Checks whether inputs can be fired, which by default is always true.
@@ -716,7 +616,7 @@ var GameStartr;
          * Generic Function to start the game. Nothing actually happens here.
          */
         GameStartr.prototype.gameStart = function () {
-            this.ModAttacher.fireEvent("onGameStart");
+            // ...
         };
         /* Physics & similar
         */

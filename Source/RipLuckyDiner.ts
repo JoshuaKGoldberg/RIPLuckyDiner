@@ -103,17 +103,13 @@ module RipLuckyDiner {
             "audio": undefined,
             "collisions": undefined,
             "devices": undefined,
-            "editor": undefined,
-            "generator": undefined,
             "groups": undefined,
             "events": undefined,
-            "help": undefined,
             "items": undefined,
             "input": undefined,
             "maps": undefined,
             "math": undefined,
             "menus": undefined,
-            "mods": undefined,
             "objects": undefined,
             "quadrants": undefined,
             "renderer": undefined,
@@ -401,15 +397,9 @@ module RipLuckyDiner {
          *               default, 0).
          * @param top   The vertical point to place the Thing's top at (by default,
          *              0).
-         * @param useSavedInfo   Whether an Area's saved info in StateHolder should be 
-         *                       applied to the Thing's position (by default, false).
          */
-        addThing(thingRaw: string | IThing | [string, any], left: number = 0, top: number = 0, useSavedInfo?: boolean): IThing {
+        addThing(thingRaw: string | IThing | [string, any], left: number = 0, top: number = 0): IThing {
             let thing: IThing = <IThing>super.addThing.call(this, thingRaw, left, top);
-
-            if (useSavedInfo) {
-                thing.Diner.applyThingSavedPosition(thing);
-            }
 
             if (thing.id) {
                 thing.Diner.StateHolder.applyChanges(thing.id, thing);
@@ -421,29 +411,6 @@ module RipLuckyDiner {
             }
 
             return thing;
-        }
-
-        /**
-         * Applies a thing's stored xloc and yloc to its position.
-         * 
-         * @param thing   A Thing being placed in the game.
-         */
-        applyThingSavedPosition(thing: IThing): void {
-            let savedInfo: any = thing.Diner.StateHolder.getChanges(thing.id);
-            if (!savedInfo) {
-                return;
-            }
-
-            if (savedInfo.xloc) {
-                thing.Diner.setLeft(
-                    thing,
-                    thing.Diner.MapScreener.left + savedInfo.xloc * thing.Diner.unitsize);
-            }
-            if (savedInfo.yloc) {
-                thing.Diner.setTop(
-                    thing,
-                    thing.Diner.MapScreener.top + savedInfo.yloc * thing.Diner.unitsize);
-            }
         }
 
         /**
@@ -467,8 +434,7 @@ module RipLuckyDiner {
             thing.Diner.addThing(
                 thing,
                 prething.left * thing.Diner.unitsize - thing.Diner.MapScreener.left,
-                prething.top * thing.Diner.unitsize - thing.Diner.MapScreener.top,
-                true);
+                prething.top * thing.Diner.unitsize - thing.Diner.MapScreener.top);
 
             // Either the prething or thing, in that order, may request to be in the
             // front or back of the container
@@ -486,8 +452,6 @@ module RipLuckyDiner {
                     }
                 });
             }
-
-            thing.Diner.ModAttacher.fireEvent("onAddPreThing", prething);
         }
 
         /**
@@ -497,19 +461,15 @@ module RipLuckyDiner {
          * 
          * @param left   A left edge to place the Thing at (by default, 0).
          * @param bottom   A top to place the Thing upon (by default, 0).
-         * @param useSavedInfo   Whether an Area's saved info in StateHolder should be 
-         *                       applied to the Thing's position (by default, false).
          * @returns A newly created Player in the game.
          */
-        addPlayer(left: number = 0, top: number = 0, useSavedInfo?: boolean): IPlayer {
+        addPlayer(left: number = 0, top: number = 0): IPlayer {
             let player: IPlayer = this.player = this.ObjectMaker.make("Player");
             player.keys = player.getKeys();
 
             this.InputWriter.setEventInformation(player);
 
-            this.addThing(player, left || 0, top || 0, useSavedInfo);
-
-            this.ModAttacher.fireEvent("onAddPlayer", player);
+            this.addThing(player, left || 0, top || 0);
 
             return player;
         }
@@ -588,8 +548,6 @@ module RipLuckyDiner {
                 thing,
                 0);
 
-            thing.Diner.ModAttacher.fireEvent("onKeyDownUpReal");
-
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -646,8 +604,6 @@ module RipLuckyDiner {
                 thing,
                 2);
 
-            thing.Diner.ModAttacher.fireEvent("onKeyDownDown");
-
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -674,8 +630,6 @@ module RipLuckyDiner {
                 RipLuckyDiner.inputTimeTolerance,
                 thing,
                 3);
-
-            thing.Diner.ModAttacher.fireEvent("onKeyDownLeft");
 
             if (event && event.preventDefault) {
                 event.preventDefault();
@@ -709,8 +663,6 @@ module RipLuckyDiner {
                     thing.nextDirection = direction;
                 }
             }
-
-            thing.Diner.ModAttacher.fireEvent("onKeyDownDirectionReal", direction);
         }
 
         /**
@@ -739,8 +691,6 @@ module RipLuckyDiner {
                 }
             }
 
-            thing.Diner.ModAttacher.fireEvent("onKeyDownA");
-
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -764,8 +714,6 @@ module RipLuckyDiner {
                 (<IPlayer>thing).keys.b = true;
             }
 
-            thing.Diner.ModAttacher.fireEvent("onKeyDownB");
-
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -783,8 +731,6 @@ module RipLuckyDiner {
                 thing.Diner.GamesRunner.pause();
             }
 
-            thing.Diner.ModAttacher.fireEvent("onKeyDownPause");
-
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -799,7 +745,6 @@ module RipLuckyDiner {
          */
         keyDownMute(thing: ICharacter, event?: Event): void {
             thing.Diner.AudioPlayer.toggleMuted();
-            thing.Diner.ModAttacher.fireEvent("onKeyDownMute");
 
             if (event && event.preventDefault) {
                 event.preventDefault();
@@ -813,8 +758,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpLeft(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpLeft");
-
             if (thing.player) {
                 (<IPlayer>thing).keys[3] = false;
 
@@ -836,8 +779,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpRight(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpRight");
-
             if (thing.player) {
                 (<IPlayer>thing).keys[1] = false;
 
@@ -858,8 +799,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpUp(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpUp");
-
             if (thing.player) {
                 (<IPlayer>thing).keys[0] = false;
 
@@ -881,8 +820,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpDown(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpDown");
-
             if (thing.player) {
                 (<IPlayer>thing).keys[2] = false;
 
@@ -903,8 +840,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpA(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpA");
-
             if (thing.player) {
                 (<IPlayer>thing).keys.a = false;
             }
@@ -921,8 +856,6 @@ module RipLuckyDiner {
          * @param event   The original user-caused Event.
          */
         keyUpB(thing: ICharacter, event?: Event): void {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpB");
-
             if (thing.player) {
                 (<IPlayer>thing).keys.b = false;
             }
@@ -942,7 +875,6 @@ module RipLuckyDiner {
             if (thing.Diner.GamesRunner.getPaused()) {
                 thing.Diner.GamesRunner.play();
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyUpPause");
 
             if (event && event.preventDefault) {
                 event.preventDefault();
@@ -970,7 +902,7 @@ module RipLuckyDiner {
         }
 
         /**
-         * Maintenance for all active Characters. Walking, grass maintenance, alive
+         * Maintenance for all active Characters. Walking, alive
          * checking, and quadrant maintenance are performed. 
          * 
          * @param Diner
@@ -988,10 +920,6 @@ module RipLuckyDiner {
                     character.shouldWalk = false;
                 }
 
-                if (character.grass) {
-                    Diner.maintainCharacterGrass(Diner, character, character.grass);
-                }
-
                 if (!character.alive && !character.outerOk) {
                     Diner.arrayDeleteThing(character, characters, i);
                     i -= 1;
@@ -1004,35 +932,6 @@ module RipLuckyDiner {
 
                 Diner.QuadsKeeper.determineThingQuadrants(character);
                 Diner.ThingHitter.checkHitsForThing(character);
-            }
-        }
-
-        /**
-         * Maintenance for a Character visually in grass. The shadow is updated to
-         * move or be deleted as needed.
-         * 
-         * @param Diner
-         * @param thing   A Character in grass.
-         * @param other   Grass that thing is in.
-         */
-        maintainCharacterGrass(Diner: RipLuckyDiner, thing: ICharacter, other: IGrass): void {
-            // If thing is no longer in grass, delete the shadow and stop
-            if (!thing.Diner.isThingWithinGrass(thing, other)) {
-                thing.Diner.killNormal(thing.shadow);
-                thing.canvas.height = thing.height * thing.Diner.unitsize;
-                thing.Diner.PixelDrawer.setThingSprite(thing);
-
-                delete thing.shadow;
-                delete thing.grass;
-                return;
-            }
-
-            // Keep the shadow in sync with thing in position and visuals.
-            thing.Diner.setLeft(thing.shadow, thing.left);
-            thing.Diner.setTop(thing.shadow, thing.top);
-
-            if (thing.shadow.className !== thing.className) {
-                thing.Diner.setClass(thing.shadow, thing.className);
             }
         }
 
@@ -1107,14 +1006,6 @@ module RipLuckyDiner {
         }
 
 
-        /**
-         * Displays message when a Player tries to use an item that cannot be used.
-         *
-         * @param player   A Player who cannot use an item.
-         */
-        cannotDoThat(player: IPlayer): void {
-            player.Diner.displayMessage(player, "OAK: %%%%%%%PLAYER%%%%%%%! \n This isn't the \n time to use that!");
-        }
 
         /* General animations
         */
@@ -1683,10 +1574,6 @@ module RipLuckyDiner {
                 return;
             }
 
-            if (thing.follower) {
-                thing.walkingCommands.push(direction);
-            }
-
             thing.Diner.animateCharacterStartWalking(thing, direction, onStop);
 
             if (!thing.bordering[direction]) {
@@ -1861,17 +1748,13 @@ module RipLuckyDiner {
 
         /**
          * Animates a Player to stop walking, which is the same logic for a normal
-         * Character as well as MenuGrapher and following checks.
+         * Character as well as MenuGrapher checks.
          * 
          * @param thing   A Player to stop walking.
          * @param onStop   A queue of commands as alternating directions and distances.
          * @returns True, unless the next onStop is a Function to return the result of.
          */
         animatePlayerStopWalking(thing: IPlayer, onStop: IWalkingOnStop): boolean {
-            if (thing.following) {
-                return thing.Diner.animateCharacterStopWalking(thing, onStop);
-            }
-
             if (
                 !thing.Diner.MenuGrapher.getActiveMenu()
                 && thing.keys[thing.direction]) {
@@ -2007,8 +1890,7 @@ module RipLuckyDiner {
         }
 
         /**
-         * Animates the various logic pieces for finishing a dialog, such as pushes,
-         * gifts, options, and battle starting or disabling.
+         * Animates the various logic pieces for finishing a dialog, such as pushes.
          * 
          * @param thing   A Player that's finished talking to other.
          * @param other   A Character that thing has finished talking to.
@@ -2016,276 +1898,17 @@ module RipLuckyDiner {
         animateCharacterDialogFinish(thing: IPlayer, other: ICharacter): void {
             let onStop: IWalkingOnStop;
 
-            thing.Diner.ModAttacher.fireEvent("onDialogFinish", other);
-
             if (other.pushSteps) {
                 onStop = other.pushSteps;
+            }
+
+            if (other.directionPreferred) {
+                this.animateCharacterSetDirection(other, other.directionPreferred);
             }
 
             thing.talking = false;
             other.talking = false;
             thing.canKeyWalking = true;
-
-            if (other.directionPreferred) {
-                thing.Diner.animateCharacterSetDirection(other, other.directionPreferred);
-            }
-
-            if (other.transport) {
-                other.active = true;
-                thing.Diner.activateTransporter(thing, <ITransporter><any>other);
-                return;
-            }
-
-            if (typeof other.pushDirection !== "undefined") {
-                thing.Diner.animateCharacterStartWalkingCycle(
-                    thing, other.pushDirection, onStop
-                );
-            }
-
-            if (other.dialogNext) {
-                other.dialog = other.dialogNext;
-                other.dialogNext = undefined;
-                thing.Diner.StateHolder.addChange(other.id, "dialog", other.dialog);
-                thing.Diner.StateHolder.addChange(other.id, "dialogNext", undefined);
-            }
-
-            if (other.dialogOptions) {
-                thing.Diner.animateCharacterDialogOptions(thing, other, other.dialogOptions);
-            }
-        }
-
-        /**
-         * Displays a yes/no options menu for after a dialog has completed.
-         * 
-         * 
-         * @param thing   A Player that's finished talking to other.
-         * @param other   A Character that thing has finished talking to.
-         * @param dialog   The dialog settings that just finished.
-         */
-        animateCharacterDialogOptions(thing: IPlayer, other: ICharacter, dialog: IDialog): void {
-            let options: IDialogOptions = dialog.options,
-                generateCallback: any = function (dialog: string | IDialog): () => void {
-                    if (!dialog) {
-                        return undefined;
-                    }
-
-                    let callback: (...args: any[]) => void,
-                        words: MenuGraphr.IMenuDialogRaw;
-
-                    if (dialog.constructor === Object && (<IDialog>dialog).options) {
-                        words = (<IDialog>dialog).words;
-                        callback = thing.Diner.animateCharacterDialogOptions.bind(
-                            thing.Diner, thing, other, dialog);
-                    } else {
-                        words = (<IDialog>dialog).words || <string>dialog;
-                        if ((<IDialog>dialog).cutscene) {
-                            callback = thing.Diner.ScenePlayer.bindCutscene(
-                                (<IDialog>dialog).cutscene,
-                                {
-                                    "player": thing,
-                                    "tirggerer": other
-                                });
-                        }
-                    }
-
-                    return function (): void {
-                        thing.Diner.MenuGrapher.deleteMenu("Yes/No");
-                        thing.Diner.MenuGrapher.createMenu("GeneralText", {
-                            // "deleteOnFinish": true
-                        });
-                        thing.Diner.MenuGrapher.addMenuDialog(
-                            "GeneralText", words, callback);
-                        thing.Diner.MenuGrapher.setActiveMenu("GeneralText");
-                    };
-                };
-
-            console.warn("DialogOptions assumes type = Yes/No for now...");
-
-            thing.Diner.MenuGrapher.createMenu("Yes/No", {
-                "position": {
-                    "offset": {
-                        "left": 28
-                    }
-                }
-            });
-            thing.Diner.MenuGrapher.addMenuList("Yes/No", {
-                "options": [
-                    {
-                        "text": "YES",
-                        "callback": generateCallback(options.Yes)
-                    }, {
-                        "text": "NO",
-                        "callback": generateCallback(options.No)
-                    }]
-            });
-            thing.Diner.MenuGrapher.setActiveMenu("Yes/No");
-        }
-
-        /**
-         * Starts a Character walking behind another Character. The leader is given a
-         * .walkingCommands queue of recent steps that the follower will mimic.
-         * 
-         * @param thing   The following Character.
-         * @param other   The leading Character.
-         */
-        animateCharacterFollow(thing: ICharacter, other: ICharacter): void {
-            let direction: Direction = thing.Diner.getDirectionBordering(thing, other);
-
-            thing.nocollide = true;
-
-            if (thing.player) {
-                (<IPlayer>thing).allowDirectionAsKeys = true;
-                (<IPlayer>thing).shouldWalk = false;
-            }
-
-            thing.following = other;
-            other.follower = thing;
-
-            thing.Diner.addStateHistory(thing, "speed", thing.speed);
-            thing.speed = other.speed;
-
-            other.walkingCommands = [];
-
-            thing.Diner.animateCharacterSetDirection(thing, direction);
-
-            switch (direction) {
-                case 0:
-                    thing.Diner.setTop(thing, other.bottom);
-                    break;
-                case 1:
-                    thing.Diner.setRight(thing, other.left);
-                    break;
-                case 2:
-                    thing.Diner.setBottom(thing, other.top);
-                    break;
-                case 3:
-                    thing.Diner.setLeft(thing, other.right);
-                    break;
-                default:
-                    break;
-            }
-
-            // Manually start the walking process without giving a 0 onStop,
-            // so that it continues smoothly in the walking interval
-            thing.Diner.animateCharacterStartWalking(thing, direction);
-
-            thing.followingLoop = thing.Diner.TimeHandler.addEventInterval(
-                thing.Diner.animateCharacterFollowContinue,
-                thing.Diner.MathDecider.compute("speedWalking", thing),
-                Infinity,
-                thing,
-                other);
-        }
-
-        /**
-         * Continuation helper for a following cycle. The next walking command is
-         * played, if it exists.
-         * 
-         * @param thing   The following Character.
-         * @param other   The leading Character.
-         */
-        animateCharacterFollowContinue(thing: ICharacter, other: ICharacter): void {
-            if (other.walkingCommands.length === 0) {
-                return;
-            }
-
-            let direction: Direction = other.walkingCommands.shift();
-
-            thing.Diner.animateCharacterStartWalking(thing, direction, 0);
-        }
-
-        /**
-         * Animates a Character to stop having a follower.
-         * 
-         * @param thing   The leading Character.
-         * @returns True, to stop TimeHandlr cycles.
-         */
-        animateCharacterFollowStop(thing: ICharacter): boolean {
-            let other: ICharacter = thing.following;
-            if (!other) {
-                return true;
-            }
-
-            thing.nocollide = false;
-            delete thing.following;
-            delete other.follower;
-
-            thing.Diner.animateCharacterStopWalking(thing);
-            thing.Diner.TimeHandler.cancelEvent(thing.followingLoop);
-
-            return true;
-        }
-
-        /**
-         * Animates a Character to hop over a ledge.
-         * 
-         * @param thing   A walking Character.
-         * @param other   A ledge for thing to hop over.
-         */
-        animateCharacterHopLedge(thing: ICharacter, other: IThing): void {
-            let shadow: IThing = thing.Diner.addThing("Shadow"),
-                dy: number = -thing.Diner.unitsize,
-                speed: number = 2,
-                steps: number = 14,
-                changed: number = 0;
-
-            thing.shadow = shadow;
-            thing.ledge = other;
-
-            // Center the shadow below the Thing
-            thing.Diner.setMidXObj(shadow, thing);
-            thing.Diner.setBottom(shadow, thing.bottom);
-
-            // Continuously ensure The Thing still moves off the ledge if not walking
-            thing.Diner.TimeHandler.addEventInterval(
-                function (): boolean {
-                    if (thing.walking) {
-                        return false;
-                    }
-
-                    thing.Diner.animateCharacterSetDistanceVelocity(thing, thing.distance);
-                    return true;
-                },
-                1,
-                steps * speed - 1);
-
-            // Keep the shadow below the Thing, and move the Thing's offsetY
-            thing.Diner.TimeHandler.addEventInterval(
-                function (): void {
-                    thing.Diner.setBottom(shadow, thing.bottom);
-
-                    if (changed % speed === 0) {
-                        thing.offsetY += dy;
-                    }
-
-                    changed += 1;
-                },
-                1,
-                steps * speed);
-
-            // Inverse the Thing's offsetY changes halfway through the hop
-            thing.Diner.TimeHandler.addEvent(
-                function (): void {
-                    dy *= -1;
-                },
-                speed * (steps / 2) | 0);
-
-            // Delete the shadow after the jump is done
-            thing.Diner.TimeHandler.addEvent(
-                function (): void {
-                    delete thing.ledge;
-                    thing.Diner.killNormal(shadow);
-
-                    if (!thing.walking) {
-                        thing.Diner.animateCharacterStopWalking(thing);
-                    }
-
-                    if (thing.player) {
-                        (<IPlayer>thing).canKeyWalking = true;
-                        thing.Diner.MapScreener.blockInputs = false;
-                    }
-                },
-                steps * speed);
         }
 
 
@@ -2566,7 +2189,6 @@ module RipLuckyDiner {
 
             if (thing.Diner) {
                 thing.Diner.TimeHandler.cancelAllCycles(thing);
-                thing.Diner.ModAttacher.fireEvent("onKillNormal", thing);
 
                 if (thing.id) {
                     delete thing.Diner.MapScreener.thingsById[thing.id];
@@ -2854,35 +2476,6 @@ module RipLuckyDiner {
         }
 
         /**
-         * Determines whether a Character is visually within grass.
-         * 
-         * @param thing   An in-game Character.
-         * @param other   Grass that thing might be in.
-         * @returns Whether thing is visually within other.
-         */
-        isThingWithinGrass(thing: ICharacter, other: IGrass): boolean {
-            if (thing.right <= other.left) {
-                return false;
-            }
-
-            if (thing.left >= other.right) {
-                return false;
-            }
-
-            if (other.top > (
-                thing.top + thing.heightGrass * thing.Diner.unitsize)) {
-                return false;
-            }
-
-            if (other.bottom < (
-                thing.top + thing.heightGrass * thing.Diner.unitsize)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        /**
          * Shifts a Character according to its xvel and yvel.
          * 
          * @param thing   A Character to shift.
@@ -2973,155 +2566,6 @@ module RipLuckyDiner {
             return false;
         }
 
-        /**
-         * Activates a Spawner by calling its .activate.
-         * 
-         * @param thing   A newly placed Spawner.
-         */
-        activateSpawner(thing: IDetector): void {
-            thing.activate(thing);
-        }
-
-        /**
-         * Activates a WindowDetector by immediately starting its cycle of
-         * checking whether it's in-frame to activate.
-         * 
-         * @param thing   A newly placed WindowDetector.
-         */
-        spawnWindowDetector(thing: IDetector): void {
-            if (!thing.Diner.checkWindowDetector(thing)) {
-                thing.Diner.TimeHandler.addEventInterval(
-                    thing.Diner.checkWindowDetector, 7, Infinity, thing);
-            }
-        }
-
-        /**
-         * Checks if a WindowDetector is within frame, and activates it if so.
-         * 
-         * @param thing   An in-game WindowDetector.
-         */
-        checkWindowDetector(thing: IDetector): boolean {
-            if (
-                thing.bottom < 0
-                || thing.left > thing.Diner.MapScreener.width
-                || thing.top > thing.Diner.MapScreener.height
-                || thing.right < 0) {
-                return false;
-            }
-
-            thing.activate(thing);
-            thing.Diner.killNormal(thing);
-            return true;
-        }
-
-        /**
-         * Activates an AreaSpawner. If it's for a different Area than the current,
-         * that area is spawned in the appropriate direction.
-         * 
-         * @param thing   An AreaSpawner to activate.
-         */
-        spawnAreaSpawner(thing: IAreaSpawner): void {
-            let map: IMap = <IMap>thing.Diner.AreaSpawner.getMap(thing.map),
-                area: IArea = <IArea>map.areas[thing.area];
-
-            if (area === thing.Diner.AreaSpawner.getArea()) {
-                thing.Diner.killNormal(thing);
-                return;
-            }
-
-            if (
-                area.spawnedBy
-                && area.spawnedBy === (<IArea>thing.Diner.AreaSpawner.getArea()).spawnedBy
-            ) {
-                thing.Diner.killNormal(thing);
-                return;
-            }
-
-            area.spawnedBy = (<IArea>thing.Diner.AreaSpawner.getArea()).spawnedBy;
-
-            thing.Diner.activateAreaSpawner(thing, area);
-        }
-
-        /**
-         * Runs an AreaSpawner to place its Area's Things in the map.
-         * 
-         * @param thing   An in-game AreaSpawner.
-         * @param area   The Area associated with thing.
-         */
-        activateAreaSpawner(thing: IAreaSpawner, area: IArea): void {
-            let direction: Direction = thing.direction,
-                creation: any[] = area.creation,
-                Diner: RipLuckyDiner = thing.Diner,
-                MapsCreator: MapsCreatr.IMapsCreatr = Diner.MapsCreator,
-                AreaSpawner: AreaSpawnr.IAreaSpawnr = Diner.AreaSpawner,
-                QuadsKeeper: QuadsKeepr.IQuadsKeepr = Diner.QuadsKeeper,
-                areaCurrent: IArea = <IArea>AreaSpawner.getArea(),
-                mapCurrent: IMap = <IMap>AreaSpawner.getMap(),
-                prethingsCurrent: any = AreaSpawner.getPreThings(),
-                left: number = thing.left + thing.Diner.MapScreener.left,
-                top: number = thing.top + thing.Diner.MapScreener.top;
-
-            switch (direction) {
-                case 0:
-                    top -= area.height * thing.Diner.unitsize;
-                    break;
-                case 1:
-                    left += thing.width * thing.Diner.unitsize;
-                    break;
-                case 2:
-                    top += thing.height * thing.Diner.unitsize;
-                    break;
-                case 3:
-                    left -= area.width * thing.Diner.unitsize;
-                    break;
-                default:
-                    throw new Error("Unknown direction: " + direction + ".");
-            }
-
-            let x: number = left / Diner.unitsize + (thing.offsetX || 0);
-            let y: number = top / Diner.unitsize + (thing.offsetY || 0);
-
-            Diner.expandMapBoundariesForArea(Diner, area, x, y);
-
-            for (let i: number = 0; i < creation.length; i += 1) {
-                // A copy of the command must be used, so as to not modify the original 
-                let command: any = Diner.proliferate(
-                    {
-                        "noBoundaryStretch": true,
-                        "areaName": area.name,
-                        "mapName": area.map.name
-                    },
-                    creation[i]);
-
-                if (!command.x) {
-                    command.x = x;
-                } else {
-                    command.x += x;
-                }
-                if (!command.y) {
-                    command.y = y;
-                } else {
-                    command.y += y;
-                }
-
-                // Having an entrance might conflict with previously set Locations
-                if (command.hasOwnProperty("entrance")) {
-                    delete command.entrance;
-                }
-
-                MapsCreator.analyzePreSwitch(command, prethingsCurrent, areaCurrent, mapCurrent);
-            }
-
-            AreaSpawner.spawnArea(
-                DirectionSpawns[direction],
-                QuadsKeeper.top / Diner.unitsize,
-                QuadsKeeper.right / Diner.unitsize,
-                QuadsKeeper.bottom / Diner.unitsize,
-                QuadsKeeper.left / Diner.unitsize);
-
-            area.spawned = true;
-            Diner.killNormal(thing);
-        }
 
         /**
          * Expands the MapScreener boundaries for a newly added Area.
@@ -3137,47 +2581,8 @@ module RipLuckyDiner {
             Diner.MapScreener.scrollability = Scrollability.Both;
         }
 
-
         /* Memory
         */
-
-        /**
-         * Saves the positions of all Characters in the game.
-         *
-         * @param Diner
-         */
-        saveCharacterPositions(Diner: RipLuckyDiner): void {
-            let characters: ICharacter[] = <ICharacter[]>Diner.GroupHolder.getGroup("Character");
-
-            for (let i: number = 0; i < characters.length; i += 1) {
-                let character: ICharacter = characters[i];
-                let id: string = character.id;
-
-                Diner.saveCharacterPosition(Diner, character, id);
-            }
-        }
-
-        /**
-         * Saves the position of a certain Character.
-         * 
-         * @param Diner
-         * @param character   An in-game Character.
-         * @param id   The ID associated with the Character.
-         */
-        saveCharacterPosition(Diner: RipLuckyDiner, character: ICharacter, id: string): void {
-            Diner.StateHolder.addChange(
-                id,
-                "xloc",
-                (character.left + Diner.MapScreener.left) / Diner.unitsize);
-            Diner.StateHolder.addChange(
-                id,
-                "yloc",
-                (character.top + Diner.MapScreener.top) / Diner.unitsize);
-            Diner.StateHolder.addChange(
-                id,
-                "direction",
-                character.direction);
-        }
 
         /**
          * Pushes and saves the current state of a variable to a stack.
@@ -3216,28 +2621,6 @@ module RipLuckyDiner {
             }
 
             thing[title] = stateHistory.pop();
-        }
-
-        /**
-         * Clears the data saved in localStorage and saves it in a new object in localStorage
-         * upon a new game being started.
-         */
-        clearSavedData(): void {
-            let oldLocalStorage: ItemsHoldr.IItems = this.ItemsHolder.exportItems();
-
-            let collectionKeys: string[] = this.ItemsHolder.getItem(this.StateHolder.getPrefix() + "collectionKeys");
-            for (let i: number = 0; collectionKeys && i < collectionKeys.length; i += 1) {
-                oldLocalStorage[collectionKeys[i]] = this.ItemsHolder.getItem(collectionKeys[i]);
-            }
-
-            let keys: string[] = this.ItemsHolder.getKeys();
-            for (let i: number = 0; i < keys.length; i += 1) {
-                this.ItemsHolder.removeItem(keys[i]);
-            }
-
-            this.ItemsHolder.clear();
-            this.ItemsHolder.setItem("oldLocalStorage", oldLocalStorage);
-            this.ItemsHolder.saveItem("oldLocalStorage");
         }
 
         /**
@@ -3286,12 +2669,8 @@ module RipLuckyDiner {
 
             let map: IMap = <IMap>this.AreaSpawner.setMap(name);
 
-            this.ModAttacher.fireEvent("onPreSetMap", map);
-
             this.NumberMaker.resetFromSeed(map.seed);
             this.InputWriter.restartHistory();
-
-            this.ModAttacher.fireEvent("onSetMap", map);
 
             this.setLocation(
                 location
@@ -3330,8 +2709,6 @@ module RipLuckyDiner {
                 "timestamp": new Date().getTime()
             };
 
-            this.ModAttacher.fireEvent("onPreSetLocation", location);
-
             this.PixelDrawer.setBackground((<IArea>this.AreaSpawner.getArea()).background);
 
             this.StateHolder.setCollection(location.area.map.name + "::" + location.area.name);
@@ -3347,8 +2724,6 @@ module RipLuckyDiner {
             if (!noEntrance) {
                 location.entry(this, location);
             }
-
-            this.ModAttacher.fireEvent("onSetLocation", location);
 
             this.GamesRunner.play();
 
@@ -3432,52 +2807,6 @@ module RipLuckyDiner {
          */
         generateThingsByIdContainer(): IThingsById {
             return {};
-        }
-
-        /**
-         * Analyzes a PreThing to be placed in one of the
-         * cardinal directions of the current Map's boundaries
-         * (just outside of the current Area).
-         * 
-         * @param prething   A PreThing whose Thing is to be added to the game.
-         * @param direction   The cardinal direction the Character is facing.
-         * @remarks Direction is taken in by the .forEach call as the index.
-         */
-        mapAddAfter(prething: IPreThing, direction: Direction): void {
-            let MapsCreator: MapsCreatr.IMapsCreatr = this.MapsCreator,
-                AreaSpawner: AreaSpawnr.IAreaSpawnr = this.AreaSpawner,
-                prethings: any = AreaSpawner.getPreThings(),
-                area: IArea = <IArea>AreaSpawner.getArea(),
-                map: IMap = <IMap>AreaSpawner.getMap(),
-                boundaries: IAreaBoundaries = <IAreaBoundaries>this.AreaSpawner.getArea().boundaries;
-
-            prething.direction = direction;
-            switch (direction) {
-                case 0:
-                    prething.x = boundaries.left;
-                    prething.y = boundaries.top - 8;
-                    prething.width = boundaries.right - boundaries.left;
-                    break;
-                case 1:
-                    prething.x = boundaries.right;
-                    prething.y = boundaries.top;
-                    prething.height = boundaries.bottom - boundaries.top;
-                    break;
-                case 2:
-                    prething.x = boundaries.left;
-                    prething.y = boundaries.bottom;
-                    prething.width = boundaries.right - boundaries.left;
-                    break;
-                case 3:
-                    prething.x = boundaries.left - 8;
-                    prething.y = boundaries.top;
-                    prething.height = boundaries.bottom - boundaries.top;
-                    break;
-                default:
-                    throw new Error("Unknown direction: " + direction + ".");
-            }
-
-            MapsCreator.analyzePreSwitch(prething, prethings, area, map);
         }
 
 
@@ -3619,22 +2948,6 @@ module RipLuckyDiner {
             }
         }
 
-        /**
-         * Map entrace Function used when player is added to the Map at the beginning 
-         * of play. Retrieves Character position from the previous save state.
-         * 
-         * @param Diner
-         */
-        mapEntranceResume(Diner: RipLuckyDiner): void {
-            let savedInfo: any = Diner.StateHolder.getChanges("player") || {};
-
-            Diner.addPlayer(savedInfo.xloc || 0, savedInfo.yloc || 0, true);
-
-            Diner.animateCharacterSetDirection(Diner.player, savedInfo.direction || Direction.Top);
-
-            Diner.centerMapScreen(Diner);
-        }
-
 
         /* Cutscenes
         */
@@ -3725,57 +3038,6 @@ module RipLuckyDiner {
             }
 
             return false;
-        }
-
-        /**
-         * Function to add a stackable item to an Array. If it already exists,
-         * the Function increases its value by count. Otherwise, it adds a new item
-         * to the Array.
-         * 
-         * @param array   The Array containing the stackable items.
-         * @param title   The name of the stackable item to be added.
-         * @param count   The number of these stackable items.
-         * @param keyTitle   The key associated with the item's name, such as "item".
-         * @param keyCount   The key associated with the item's count, such as "amount".
-         * @returns Whether the stackable item was newly added.
-         */
-        combineArrayMembers(array: any[], title: string, count: number, keyTitle: string, keyCount: string): boolean {
-            for (let i: number = 0; i < array.length; i += 1) {
-                if (array[i][keyTitle] === title) {
-                    array[i][keyCount] += count;
-                    return false;
-                }
-            }
-
-            let object: any = {};
-            object[keyTitle] = title;
-            object[keyCount] = count;
-            array.push(object);
-
-            return true;
-        }
-
-        /**
-         * Displays a message to the user.
-         *
-         * @param thing   The Thing that triggered the error.
-         * @param message   The message to be displayed.
-         */
-        displayMessage(thing: IThing, message: string): void {
-            if (thing.Diner.MenuGrapher.getActiveMenu()) {
-                return;
-            }
-
-            thing.Diner.MenuGrapher.createMenu("GeneralText", {
-                "deleteOnFinish": true
-            });
-            thing.Diner.MenuGrapher.addMenuDialog(
-                "GeneralText",
-                [
-                    message
-                ]
-            );
-            thing.Diner.MenuGrapher.setActiveMenu("GeneralText");
         }
     }
 }

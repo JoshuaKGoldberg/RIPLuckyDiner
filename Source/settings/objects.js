@@ -11,18 +11,12 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
         "Thing": {
             "Character": {
                 "BugCatcher": {},
-                "Buzzer": {},
-                "CoolTrainerM": {},
-                "Daisy": {},
-                "Lady": {},
                 "Lass": {},
-                "Mother": {},
                 "Player": {},
                 "Scientist": {}
             },
             "Solid": {
                 "AsianScroll": {},
-                "Cabinet": {},
                 "CollisionDetector": {
                     "CutsceneTriggerer": {},
                     "MenuTriggerer": {},
@@ -32,41 +26,21 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                     },
                 },
                 "Computer": {},
-                "ComputerDesk": {},
-                "FenceWide": {},
-                "FenceVertical": {},
                 "FloorDiamondsDark": {},
-                "Grass": {},
-                "GymStatue": {},
-                "HealingMachine": {},
-                "HealingMachineBall": {},
-                "HouseWallWhitewash": {},
                 "InvisibleWall": {},
-                "LabComputer": {},
-                "Label": {
-                    "GymLabel": {},
-                    "MartLabel": {}
-                },
                 "Register": {},
-                "Rock": {},
                 "Sign": {},
                 "SofaLeft": {},
-                "Spawner": {},
                 "SquareWall": {
                     "SquareWallTop": {},
                     "SquareWallFront": {}
                 },
                 "StoreAisle": {},
-                "StoreFridge": {},
-                "StoreSaleBin": {},
-                "Stump": {},
                 "Table": {
                     "TableBar": {},
                     "Table1x1": {},
                     "Table1x2": {},
-                    "Table2x2": {},
-                    "Table2x3": {},
-                    "Table3x1": {},
+                    "Table2x3": {}
                 },
                 "TelevisionMonitor": {},
                 "Tree": {},
@@ -75,41 +49,8 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                 }
             },
             "Scenery": {
-                "Blackboard": {},
-                "Bridge": {},
-                "Clipboard": {},
-                "Doormat": {},
-                "DoormatDotted": {},
-                "DoormatDashed": {},
                 "DoormatDiner": {},
-                "Flower": {},
-                "FlowerVase": {},
-                "ForestDirt": {},
-                "GroundArrow": {},
-                "Notepad": {},
-                "Painting": {},
-                "Shadow": {},
-                "SmokeSmall": {},
-                "SmokeMedium": {},
-                "SmokeLarge": {},
-                "Stool": {},
-                "Window": {},
-                "WindowBlinds": {},
-                "Portrait": {
-                    "PlayerPortrait": {},
-                    "PlayerSilhouetteSmall": {},
-                    "PlayerSilhouetteLarge": {},
-                    "OakPortrait": {},
-                    "RivalPortrait": {},
-                    "BlainePortrait": {},
-                    "BrockPortrait": {},
-                    "ErikaPortrait": {},
-                    "GiovanniPortrait": {},
-                    "KogaPortrait": {},
-                    "LtSurgePortrait": {},
-                    "MistyPortrait": {},
-                    "SabrinaPortrait": {}
-                }
+                "Stool": {}
             },
             "Terrain": {
                 "TerrainSmall": {
@@ -206,18 +147,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                         "Chary": {}
                     }
                 },
-                "CharacterShadow": {
-                    "Char0Shadow": {},
-                    "Char1Shadow": {},
-                    "Char2Shadow": {},
-                    "Char3Shadow": {},
-                    "Char4Shadow": {},
-                    "Char5Shadow": {},
-                    "Char6Shadow": {},
-                    "Char7Shadow": {},
-                    "Char8Shadow": {},
-                    "Char9Shadow": {},
-                },
                 "Number": {
                     "Char0": {},
                     "Char1": {},
@@ -232,49 +161,10 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                 },
                 "Symbol": {
                     "CharSpace": {},
-                    "CharTimes": {},
-                    "CharLeftParenthesis": {},
-                    "CharRightParenthesis": {},
-                    "CharColon": {},
-                    "CharSemicolon": {},
-                    "CharLeftSquareBracket": {},
-                    "CharRightSquareBracket": {},
-                    "CharMon": {},
-                    "CharNo": {},
-                    "CharID": {},
-                    "CharHyphen": {},
-                    "CharMDash": {},
-                    "CharUnderscore": {},
-                    "CharQuestionMark": {},
                     "CharExclamationMark": {},
-                    "CharMaleSymbol": {},
-                    "CharFemaleSymbol": {},
-                    "CharSlash": {},
                     "CharPeriod": {},
                     "CharComma": {},
-                    "CharED": {},
-                    "CharApostrophe": {},
-                    "CharFeet": {},
-                    "CharInches": {},
-                    "ChareFancy": {},
-                    "CharBall": {},
-                    "CharBallEmpty": {},
-                    "CharCircle": {},
-                    "CharHP": {},
-                    "CharPP": {},
-                    "CharTo": {},
-                    "CharLevel": {},
-                    "Char$": {}
-                },
-                "CharArrow": {
-                    "CharArrowUp": {},
-                    "CharArrowRight": {},
-                    "CharArrowDown": {},
-                    "CharArrowLeft": {}
-                },
-                "HalfArrow": {
-                    "HalfArrowLeft": {},
-                    "HalfArrowRight": {}
+                    "CharApostrophe": {}
                 },
                 "Line": {
                     "LineDecoratorHorizontal": {
@@ -284,8 +174,7 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                     "LineDecoratorVertical": {},
                     "LineSeparatorHorizontal": {},
                 },
-                "MapGreyDiagonal": {},
-                "TownMapNoWater": {}
+                "MapGreyDiagonal": {}
             },
             "Menu": {},
         }
@@ -300,20 +189,7 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
         },
         "Area": {
             "background": "black",
-            //"stretches": [
-            ////{ "thing": "BackgroundFaker", "noBoundaryStretch": true } // This needs implementation.
-            //],
-            "onMake": RipLuckyDiner.RipLuckyDiner.prototype.areaProcess,
-            "attributes": {
-                "invisibleWallBorders": {
-                    "afters": [
-                        { "thing": "InvisibleWall", "noBoundaryStretch": true },
-                        { "thing": "InvisibleWall", "noBoundaryStretch": true },
-                        { "thing": "InvisibleWall", "noBoundaryStretch": true },
-                        { "thing": "InvisibleWall", "noBoundaryStretch": true }
-                    ]
-                }
-            }
+            "onMake": RipLuckyDiner.RipLuckyDiner.prototype.areaProcess
         },
         "Location": {
             "entry": "Normal"
@@ -357,11 +233,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "onWalkingStop": RipLuckyDiner.RipLuckyDiner.prototype.animateCharacterStopWalking,
             "activate": RipLuckyDiner.RipLuckyDiner.prototype.collideCharacterDialog,
         },
-        "Buzzer": {
-            "width": 3.5,
-            "height": 3,
-            "nocollide": true
-        },
         "Player": {
             "id": "player",
             "player": true,
@@ -381,9 +252,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                 };
             }
         },
-        "Rival": {
-            "id": "Rival"
-        },
         "Solid": {
             "repeat": true,
             "groupType": "Solid",
@@ -393,13 +261,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "collide": RipLuckyDiner.RipLuckyDiner.prototype.collideCollisionDetector,
             "active": false,
             "hidden": true
-        },
-        "CutsceneTriggerer": {
-            "activate": RipLuckyDiner.RipLuckyDiner.prototype.activateCutsceneTriggerer,
-            "requireOverlap": true
-        },
-        "MenuTriggerer": {
-            "activate": RipLuckyDiner.RipLuckyDiner.prototype.activateMenuTriggerer
         },
         "Transporter": {
             "activate": RipLuckyDiner.RipLuckyDiner.prototype.activateTransporter,
@@ -415,15 +276,9 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "height": 12,
             "tolBottom": RipLuckyDiner.RipLuckyDiner.unitsize * 4
         },
-        "ComputerDesk": [8, 16],
-        "ConsoleController": [8, 5],
         "DialogResponder": {
             "hidden": true
         },
-        "CutsceneResponder": {
-            "activate": RipLuckyDiner.RipLuckyDiner.prototype.activateCutsceneResponder
-        },
-        "FenceVertical": [4, 8],
         "FloorDiamondsDark": {
             "width": 4,
             "height": 8,
@@ -459,9 +314,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "hidden": true,
             "onThingAdd": RipLuckyDiner.RipLuckyDiner.prototype.activateSpawner
         },
-        "AreaSpawner": {
-            "activate": RipLuckyDiner.RipLuckyDiner.prototype.spawnAreaSpawner
-        },
         "SquareWallTop": {
             "spriteheight": .5
         },
@@ -469,14 +321,10 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "spriteheight": 1.5
         },
         "StoreAisle": [16, 16],
-        "StoreFridge": [8, 16],
-        "StoreSaleBin": [8, 12],
         "TableBar": [8, 8],
         "Table1x1": [8, 8],
         "Table1x2": [8, 16],
-        "Table2x2": [16, 16],
         "Table2x3": [16, 16],
-        "Table3x1": [24, 12],
         "Tree": {},
         "Door": {
             "width": 8,
@@ -498,52 +346,10 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "groupType": "Scenery",
             "repeat": true
         },
-        "Blackboard": [16, 8],
-        "Bridge": [4, 4],
-        "Clipboard": {
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * -1.5
-        },
-        "Doormat": {
-            "spritewidth": .5,
-            "spriteheight": 8
-        },
-        "DoormatDotted": {
-            "spritewidth": 3.5,
-            "spriteheight": 7.5
-        },
-        "DoormatDashed": {
-            "spritewidth": 4,
-            "spriteheight": 8
-        },
         "DoormatDiner": {
             "spritewidth": 8,
             "spriteheight": .5
         },
-        "Flower": {
-            "width": 4,
-            "height": 4,
-            "spriteCycle": [
-                ["one", "one", "two", "three"], "waving", 14
-            ]
-        },
-        "FlowerVase": [6, 6],
-        "ForestDirt": [4, 4],
-        "GroundArrow": [4, 4],
-        "HPBar": {
-            "width": .5,
-            "height": 2,
-            "repeat": true
-        },
-        "Note": [6.5, 7],
-        "Shadow": [7, 4],
-        "SmokeSmall": [5.5, 5.5],
-        "SmokeMedium": [7.5, 7.5],
-        "SmokeLarge": [7.5, 7.5],
-        "PlayerPortrait": [13, 23],
-        "PlayerSilhouetteSmall": [7, 11.5],
-        "PlayerSilhouetteLarge": [11, 20],
-        "OakPortrait": [14.5, 28],
-        "RivalPortrait": [14.5, 28],
         "Terrain": {
             "groupType": "Terrain",
             "repeat": true,
@@ -555,8 +361,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "spritewidth": 2,
             "spriteheight": 2
         },
-        "BrickRoad": [4, 4],
-        "Mountain": [4, 4],
         "WallIndoorLightWithDarkBottom": {
             "spritewidth": .5,
             "spriteheight": 8
@@ -568,11 +372,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "spritewidth": .5,
             "spriteheight": 2,
         },
-        "Water": {
-            "spriteCycle": [
-                ["one", "two", "three", "two", "one", "four", "five", "four"], "waving", 14
-            ]
-        },
         "Text": {
             "groupType": "Text",
             "width": 4,
@@ -582,14 +381,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "noshiftx": true,
             "noshifty": true,
         },
-        "Exclamation": {
-            "width": 7,
-            "height": 7,
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * -2
-        },
-        "HalfArrowHorizontal": [4, 2],
-        "ExplosionSmall": [8, 8],
-        "ScratchLine": [1.5, 1.5],
         "Square": {
             "width": 1,
             "height": 1,
@@ -598,30 +389,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
         "CharacterDropped": {
             "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .75
         },
-        "CharacterShadow": [3.5, 3.5],
-        "CharMDash": {
-            "attributes": {
-                "blinking": {
-                    "onThingAdd": console.log.bind(console, "HA")
-                }
-            }
-        },
-        "CharMon": {
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
-        },
-        "CharNo": {
-            "width": 4,
-            "height": 3,
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
-        },
-        "CharID": {
-            "width": 4,
-            "height": 3,
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
-        },
-        "CharSlash": {
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
-        },
         "CharPeriod": {
             "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
         },
@@ -629,27 +396,6 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
             "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize * .5
         },
         "CharApostrophe": [1, 2],
-        "CharFeet": [2, 1.5],
-        "CharInches": [3.5, 2],
-        "CharBall": [3.5, 3.5],
-        "CharBallEmpty": [3.5, 3.5],
-        "CharCircle": [2.5, 2.5],
-        "CharHP": [5.5, 2],
-        "CharPP": [7.5, 3.5],
-        "CharTo": [3.5, 3],
-        "CharLevel": [3, 2.5],
-        "Char$": {
-            "width": 4,
-            "spritewidth": 2.5,
-            "height": 4,
-            "offsetX": RipLuckyDiner.RipLuckyDiner.unitsize / 2,
-            "offsetY": RipLuckyDiner.RipLuckyDiner.unitsize / 2,
-        },
-        "CharArrowUp": [3.5, 2.5],
-        "CharArrowRight": [2.5, 3.5],
-        "CharArrowDown": [3.5, 2.5],
-        "CharArrowLeft": [2.5, 3.5],
-        "HalfArrow": [4, 2],
         "Line": {
             "width": 1,
             "height": 1,
@@ -683,12 +429,7 @@ RipLuckyDiner.RipLuckyDiner.settings.objects = {
                 "lined": {
                     "spritewidth": 2,
                     "spriteheight": 2
-                },
-                "dirty": {},
-                "watery": {
-                    "spritewidth": 4,
-                    "spriteheight": 4
-                },
+                }
             }
         }
     }

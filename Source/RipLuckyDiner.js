@@ -272,16 +272,11 @@ var RipLuckyDiner;
          *               default, 0).
          * @param top   The vertical point to place the Thing's top at (by default,
          *              0).
-         * @param useSavedInfo   Whether an Area's saved info in StateHolder should be
-         *                       applied to the Thing's position (by default, false).
          */
-        RipLuckyDiner.prototype.addThing = function (thingRaw, left, top, useSavedInfo) {
+        RipLuckyDiner.prototype.addThing = function (thingRaw, left, top) {
             if (left === void 0) { left = 0; }
             if (top === void 0) { top = 0; }
             var thing = _super.prototype.addThing.call(this, thingRaw, left, top);
-            if (useSavedInfo) {
-                thing.Diner.applyThingSavedPosition(thing);
-            }
             if (thing.id) {
                 thing.Diner.StateHolder.applyChanges(thing.id, thing);
                 thing.Diner.MapScreener.thingsById[thing.id] = thing;
@@ -290,23 +285,6 @@ var RipLuckyDiner;
                 thing.Diner.animateCharacterSetDirection(thing, thing.direction);
             }
             return thing;
-        };
-        /**
-         * Applies a thing's stored xloc and yloc to its position.
-         *
-         * @param thing   A Thing being placed in the game.
-         */
-        RipLuckyDiner.prototype.applyThingSavedPosition = function (thing) {
-            var savedInfo = thing.Diner.StateHolder.getChanges(thing.id);
-            if (!savedInfo) {
-                return;
-            }
-            if (savedInfo.xloc) {
-                thing.Diner.setLeft(thing, thing.Diner.MapScreener.left + savedInfo.xloc * thing.Diner.unitsize);
-            }
-            if (savedInfo.yloc) {
-                thing.Diner.setTop(thing, thing.Diner.MapScreener.top + savedInfo.yloc * thing.Diner.unitsize);
-            }
         };
         /**
          * Adds a Thing via addPreThing based on the specifications in a PreThing.
@@ -322,7 +300,7 @@ var RipLuckyDiner;
             thing.spawned = true;
             thing.areaName = thing.areaName || thing.Diner.AreaSpawner.getAreaName();
             thing.mapName = thing.mapName || thing.Diner.AreaSpawner.getMapName();
-            thing.Diner.addThing(thing, prething.left * thing.Diner.unitsize - thing.Diner.MapScreener.left, prething.top * thing.Diner.unitsize - thing.Diner.MapScreener.top, true);
+            thing.Diner.addThing(thing, prething.left * thing.Diner.unitsize - thing.Diner.MapScreener.left, prething.top * thing.Diner.unitsize - thing.Diner.MapScreener.top);
             // Either the prething or thing, in that order, may request to be in the
             // front or back of the container
             if (position) {
@@ -339,7 +317,6 @@ var RipLuckyDiner;
                     }
                 });
             }
-            thing.Diner.ModAttacher.fireEvent("onAddPreThing", prething);
         };
         /**
          * Adds a new Player Thing to the game and sets it as EightBitter.player. Any
@@ -348,18 +325,15 @@ var RipLuckyDiner;
          *
          * @param left   A left edge to place the Thing at (by default, 0).
          * @param bottom   A top to place the Thing upon (by default, 0).
-         * @param useSavedInfo   Whether an Area's saved info in StateHolder should be
-         *                       applied to the Thing's position (by default, false).
          * @returns A newly created Player in the game.
          */
-        RipLuckyDiner.prototype.addPlayer = function (left, top, useSavedInfo) {
+        RipLuckyDiner.prototype.addPlayer = function (left, top) {
             if (left === void 0) { left = 0; }
             if (top === void 0) { top = 0; }
             var player = this.player = this.ObjectMaker.make("Player");
             player.keys = player.getKeys();
             this.InputWriter.setEventInformation(player);
-            this.addThing(player, left || 0, top || 0, useSavedInfo);
-            this.ModAttacher.fireEvent("onAddPlayer", player);
+            this.addThing(player, left || 0, top || 0);
             return player;
         };
         /**
@@ -421,7 +395,6 @@ var RipLuckyDiner;
                 thing.keys[Direction.Top] = true;
             }
             thing.Diner.TimeHandler.addEvent(thing.Diner.keyDownDirectionReal, RipLuckyDiner.inputTimeTolerance, thing, 0);
-            thing.Diner.ModAttacher.fireEvent("onKeyDownUpReal");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -462,7 +435,6 @@ var RipLuckyDiner;
                 thing.keys[Direction.Bottom] = true;
             }
             thing.Diner.TimeHandler.addEvent(thing.Diner.keyDownDirectionReal, RipLuckyDiner.inputTimeTolerance, thing, 2);
-            thing.Diner.ModAttacher.fireEvent("onKeyDownDown");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -482,7 +454,6 @@ var RipLuckyDiner;
                 thing.keys[Direction.Left] = true;
             }
             thing.Diner.TimeHandler.addEvent(thing.Diner.keyDownDirectionReal, RipLuckyDiner.inputTimeTolerance, thing, 3);
-            thing.Diner.ModAttacher.fireEvent("onKeyDownLeft");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -514,7 +485,6 @@ var RipLuckyDiner;
                     thing.nextDirection = direction;
                 }
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyDownDirectionReal", direction);
         };
         /**
          * Reacts to the A key being pressed. The MenuGraphr's active menu reacts to
@@ -538,7 +508,6 @@ var RipLuckyDiner;
                     thing.keys.a = true;
                 }
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyDownA");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -560,7 +529,6 @@ var RipLuckyDiner;
             else if (thing.keys) {
                 thing.keys.b = true;
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyDownB");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -576,7 +544,6 @@ var RipLuckyDiner;
             if (!thing.Diner.GamesRunner.getPaused()) {
                 thing.Diner.GamesRunner.pause();
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyDownPause");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -590,7 +557,6 @@ var RipLuckyDiner;
          */
         RipLuckyDiner.prototype.keyDownMute = function (thing, event) {
             thing.Diner.AudioPlayer.toggleMuted();
-            thing.Diner.ModAttacher.fireEvent("onKeyDownMute");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -602,7 +568,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpLeft = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpLeft");
             if (thing.player) {
                 thing.keys[3] = false;
                 if (thing.nextDirection === 3) {
@@ -621,7 +586,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpRight = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpRight");
             if (thing.player) {
                 thing.keys[1] = false;
                 if (thing.nextDirection === 1) {
@@ -639,7 +603,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpUp = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpUp");
             if (thing.player) {
                 thing.keys[0] = false;
                 if (thing.nextDirection === 0) {
@@ -658,7 +621,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpDown = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpDown");
             if (thing.player) {
                 thing.keys[2] = false;
                 if (thing.nextDirection === 2) {
@@ -676,7 +638,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpA = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpA");
             if (thing.player) {
                 thing.keys.a = false;
             }
@@ -691,7 +652,6 @@ var RipLuckyDiner;
          * @param event   The original user-caused Event.
          */
         RipLuckyDiner.prototype.keyUpB = function (thing, event) {
-            thing.Diner.ModAttacher.fireEvent("onKeyUpB");
             if (thing.player) {
                 thing.keys.b = false;
             }
@@ -709,7 +669,6 @@ var RipLuckyDiner;
             if (thing.Diner.GamesRunner.getPaused()) {
                 thing.Diner.GamesRunner.play();
             }
-            thing.Diner.ModAttacher.fireEvent("onKeyUpPause");
             if (event && event.preventDefault) {
                 event.preventDefault();
             }
@@ -732,7 +691,7 @@ var RipLuckyDiner;
             }
         };
         /**
-         * Maintenance for all active Characters. Walking, grass maintenance, alive
+         * Maintenance for all active Characters. Walking, alive
          * checking, and quadrant maintenance are performed.
          *
          * @param Diner
@@ -747,9 +706,6 @@ var RipLuckyDiner;
                     character.onWalkingStart(character, character.direction);
                     character.shouldWalk = false;
                 }
-                if (character.grass) {
-                    Diner.maintainCharacterGrass(Diner, character, character.grass);
-                }
                 if (!character.alive && !character.outerOk) {
                     Diner.arrayDeleteThing(character, characters, i);
                     i -= 1;
@@ -760,31 +716,6 @@ var RipLuckyDiner;
                 }
                 Diner.QuadsKeeper.determineThingQuadrants(character);
                 Diner.ThingHitter.checkHitsForThing(character);
-            }
-        };
-        /**
-         * Maintenance for a Character visually in grass. The shadow is updated to
-         * move or be deleted as needed.
-         *
-         * @param Diner
-         * @param thing   A Character in grass.
-         * @param other   Grass that thing is in.
-         */
-        RipLuckyDiner.prototype.maintainCharacterGrass = function (Diner, thing, other) {
-            // If thing is no longer in grass, delete the shadow and stop
-            if (!thing.Diner.isThingWithinGrass(thing, other)) {
-                thing.Diner.killNormal(thing.shadow);
-                thing.canvas.height = thing.height * thing.Diner.unitsize;
-                thing.Diner.PixelDrawer.setThingSprite(thing);
-                delete thing.shadow;
-                delete thing.grass;
-                return;
-            }
-            // Keep the shadow in sync with thing in position and visuals.
-            thing.Diner.setLeft(thing.shadow, thing.left);
-            thing.Diner.setTop(thing.shadow, thing.top);
-            if (thing.shadow.className !== thing.className) {
-                thing.Diner.setClass(thing.shadow, thing.className);
             }
         };
         /**
@@ -847,14 +778,6 @@ var RipLuckyDiner;
             else {
                 return Diner.player.bordering[0] ? 0 : Diner.player.yvel;
             }
-        };
-        /**
-         * Displays message when a Player tries to use an item that cannot be used.
-         *
-         * @param player   A Player who cannot use an item.
-         */
-        RipLuckyDiner.prototype.cannotDoThat = function (player) {
-            player.Diner.displayMessage(player, "OAK: %%%%%%%PLAYER%%%%%%%! \n This isn't the \n time to use that!");
         };
         /* General animations
         */
@@ -1261,9 +1184,6 @@ var RipLuckyDiner;
                 }
                 return;
             }
-            if (thing.follower) {
-                thing.walkingCommands.push(direction);
-            }
             thing.Diner.animateCharacterStartWalking(thing, direction, onStop);
             if (!thing.bordering[direction]) {
                 thing.Diner.shiftBoth(thing, -thing.xvel, -thing.yvel);
@@ -1400,16 +1320,13 @@ var RipLuckyDiner;
         };
         /**
          * Animates a Player to stop walking, which is the same logic for a normal
-         * Character as well as MenuGrapher and following checks.
+         * Character as well as MenuGrapher checks.
          *
          * @param thing   A Player to stop walking.
          * @param onStop   A queue of commands as alternating directions and distances.
          * @returns True, unless the next onStop is a Function to return the result of.
          */
         RipLuckyDiner.prototype.animatePlayerStopWalking = function (thing, onStop) {
-            if (thing.following) {
-                return thing.Diner.animateCharacterStopWalking(thing, onStop);
-            }
             if (!thing.Diner.MenuGrapher.getActiveMenu()
                 && thing.keys[thing.direction]) {
                 thing.Diner.animateCharacterSetDistanceVelocity(thing, thing.distance);
@@ -1522,214 +1439,22 @@ var RipLuckyDiner;
             }
         };
         /**
-         * Animates the various logic pieces for finishing a dialog, such as pushes,
-         * gifts, options, and battle starting or disabling.
+         * Animates the various logic pieces for finishing a dialog, such as pushes.
          *
          * @param thing   A Player that's finished talking to other.
          * @param other   A Character that thing has finished talking to.
          */
         RipLuckyDiner.prototype.animateCharacterDialogFinish = function (thing, other) {
             var onStop;
-            thing.Diner.ModAttacher.fireEvent("onDialogFinish", other);
             if (other.pushSteps) {
                 onStop = other.pushSteps;
+            }
+            if (other.directionPreferred) {
+                this.animateCharacterSetDirection(other, other.directionPreferred);
             }
             thing.talking = false;
             other.talking = false;
             thing.canKeyWalking = true;
-            if (other.directionPreferred) {
-                thing.Diner.animateCharacterSetDirection(other, other.directionPreferred);
-            }
-            if (other.transport) {
-                other.active = true;
-                thing.Diner.activateTransporter(thing, other);
-                return;
-            }
-            if (typeof other.pushDirection !== "undefined") {
-                thing.Diner.animateCharacterStartWalkingCycle(thing, other.pushDirection, onStop);
-            }
-            if (other.dialogNext) {
-                other.dialog = other.dialogNext;
-                other.dialogNext = undefined;
-                thing.Diner.StateHolder.addChange(other.id, "dialog", other.dialog);
-                thing.Diner.StateHolder.addChange(other.id, "dialogNext", undefined);
-            }
-            if (other.dialogOptions) {
-                thing.Diner.animateCharacterDialogOptions(thing, other, other.dialogOptions);
-            }
-        };
-        /**
-         * Displays a yes/no options menu for after a dialog has completed.
-         *
-         *
-         * @param thing   A Player that's finished talking to other.
-         * @param other   A Character that thing has finished talking to.
-         * @param dialog   The dialog settings that just finished.
-         */
-        RipLuckyDiner.prototype.animateCharacterDialogOptions = function (thing, other, dialog) {
-            var options = dialog.options, generateCallback = function (dialog) {
-                if (!dialog) {
-                    return undefined;
-                }
-                var callback, words;
-                if (dialog.constructor === Object && dialog.options) {
-                    words = dialog.words;
-                    callback = thing.Diner.animateCharacterDialogOptions.bind(thing.Diner, thing, other, dialog);
-                }
-                else {
-                    words = dialog.words || dialog;
-                    if (dialog.cutscene) {
-                        callback = thing.Diner.ScenePlayer.bindCutscene(dialog.cutscene, {
-                            "player": thing,
-                            "tirggerer": other
-                        });
-                    }
-                }
-                return function () {
-                    thing.Diner.MenuGrapher.deleteMenu("Yes/No");
-                    thing.Diner.MenuGrapher.createMenu("GeneralText", {});
-                    thing.Diner.MenuGrapher.addMenuDialog("GeneralText", words, callback);
-                    thing.Diner.MenuGrapher.setActiveMenu("GeneralText");
-                };
-            };
-            console.warn("DialogOptions assumes type = Yes/No for now...");
-            thing.Diner.MenuGrapher.createMenu("Yes/No", {
-                "position": {
-                    "offset": {
-                        "left": 28
-                    }
-                }
-            });
-            thing.Diner.MenuGrapher.addMenuList("Yes/No", {
-                "options": [
-                    {
-                        "text": "YES",
-                        "callback": generateCallback(options.Yes)
-                    }, {
-                        "text": "NO",
-                        "callback": generateCallback(options.No)
-                    }]
-            });
-            thing.Diner.MenuGrapher.setActiveMenu("Yes/No");
-        };
-        /**
-         * Starts a Character walking behind another Character. The leader is given a
-         * .walkingCommands queue of recent steps that the follower will mimic.
-         *
-         * @param thing   The following Character.
-         * @param other   The leading Character.
-         */
-        RipLuckyDiner.prototype.animateCharacterFollow = function (thing, other) {
-            var direction = thing.Diner.getDirectionBordering(thing, other);
-            thing.nocollide = true;
-            if (thing.player) {
-                thing.allowDirectionAsKeys = true;
-                thing.shouldWalk = false;
-            }
-            thing.following = other;
-            other.follower = thing;
-            thing.Diner.addStateHistory(thing, "speed", thing.speed);
-            thing.speed = other.speed;
-            other.walkingCommands = [];
-            thing.Diner.animateCharacterSetDirection(thing, direction);
-            switch (direction) {
-                case 0:
-                    thing.Diner.setTop(thing, other.bottom);
-                    break;
-                case 1:
-                    thing.Diner.setRight(thing, other.left);
-                    break;
-                case 2:
-                    thing.Diner.setBottom(thing, other.top);
-                    break;
-                case 3:
-                    thing.Diner.setLeft(thing, other.right);
-                    break;
-                default:
-                    break;
-            }
-            // Manually start the walking process without giving a 0 onStop,
-            // so that it continues smoothly in the walking interval
-            thing.Diner.animateCharacterStartWalking(thing, direction);
-            thing.followingLoop = thing.Diner.TimeHandler.addEventInterval(thing.Diner.animateCharacterFollowContinue, thing.Diner.MathDecider.compute("speedWalking", thing), Infinity, thing, other);
-        };
-        /**
-         * Continuation helper for a following cycle. The next walking command is
-         * played, if it exists.
-         *
-         * @param thing   The following Character.
-         * @param other   The leading Character.
-         */
-        RipLuckyDiner.prototype.animateCharacterFollowContinue = function (thing, other) {
-            if (other.walkingCommands.length === 0) {
-                return;
-            }
-            var direction = other.walkingCommands.shift();
-            thing.Diner.animateCharacterStartWalking(thing, direction, 0);
-        };
-        /**
-         * Animates a Character to stop having a follower.
-         *
-         * @param thing   The leading Character.
-         * @returns True, to stop TimeHandlr cycles.
-         */
-        RipLuckyDiner.prototype.animateCharacterFollowStop = function (thing) {
-            var other = thing.following;
-            if (!other) {
-                return true;
-            }
-            thing.nocollide = false;
-            delete thing.following;
-            delete other.follower;
-            thing.Diner.animateCharacterStopWalking(thing);
-            thing.Diner.TimeHandler.cancelEvent(thing.followingLoop);
-            return true;
-        };
-        /**
-         * Animates a Character to hop over a ledge.
-         *
-         * @param thing   A walking Character.
-         * @param other   A ledge for thing to hop over.
-         */
-        RipLuckyDiner.prototype.animateCharacterHopLedge = function (thing, other) {
-            var shadow = thing.Diner.addThing("Shadow"), dy = -thing.Diner.unitsize, speed = 2, steps = 14, changed = 0;
-            thing.shadow = shadow;
-            thing.ledge = other;
-            // Center the shadow below the Thing
-            thing.Diner.setMidXObj(shadow, thing);
-            thing.Diner.setBottom(shadow, thing.bottom);
-            // Continuously ensure The Thing still moves off the ledge if not walking
-            thing.Diner.TimeHandler.addEventInterval(function () {
-                if (thing.walking) {
-                    return false;
-                }
-                thing.Diner.animateCharacterSetDistanceVelocity(thing, thing.distance);
-                return true;
-            }, 1, steps * speed - 1);
-            // Keep the shadow below the Thing, and move the Thing's offsetY
-            thing.Diner.TimeHandler.addEventInterval(function () {
-                thing.Diner.setBottom(shadow, thing.bottom);
-                if (changed % speed === 0) {
-                    thing.offsetY += dy;
-                }
-                changed += 1;
-            }, 1, steps * speed);
-            // Inverse the Thing's offsetY changes halfway through the hop
-            thing.Diner.TimeHandler.addEvent(function () {
-                dy *= -1;
-            }, speed * (steps / 2) | 0);
-            // Delete the shadow after the jump is done
-            thing.Diner.TimeHandler.addEvent(function () {
-                delete thing.ledge;
-                thing.Diner.killNormal(shadow);
-                if (!thing.walking) {
-                    thing.Diner.animateCharacterStopWalking(thing);
-                }
-                if (thing.player) {
-                    thing.canKeyWalking = true;
-                    thing.Diner.MapScreener.blockInputs = false;
-                }
-            }, steps * speed);
         };
         /* Collision detection
         */
@@ -1970,7 +1695,6 @@ var RipLuckyDiner;
             thing.movement = undefined;
             if (thing.Diner) {
                 thing.Diner.TimeHandler.cancelAllCycles(thing);
-                thing.Diner.ModAttacher.fireEvent("onKillNormal", thing);
                 if (thing.id) {
                     delete thing.Diner.MapScreener.thingsById[thing.id];
                 }
@@ -2203,28 +1927,6 @@ var RipLuckyDiner;
                 && thing.left >= other.left);
         };
         /**
-         * Determines whether a Character is visually within grass.
-         *
-         * @param thing   An in-game Character.
-         * @param other   Grass that thing might be in.
-         * @returns Whether thing is visually within other.
-         */
-        RipLuckyDiner.prototype.isThingWithinGrass = function (thing, other) {
-            if (thing.right <= other.left) {
-                return false;
-            }
-            if (thing.left >= other.right) {
-                return false;
-            }
-            if (other.top > (thing.top + thing.heightGrass * thing.Diner.unitsize)) {
-                return false;
-            }
-            if (other.bottom < (thing.top + thing.heightGrass * thing.Diner.unitsize)) {
-                return false;
-            }
-            return true;
-        };
-        /**
          * Shifts a Character according to its xvel and yvel.
          *
          * @param thing   A Character to shift.
@@ -2295,117 +1997,6 @@ var RipLuckyDiner;
             return false;
         };
         /**
-         * Activates a Spawner by calling its .activate.
-         *
-         * @param thing   A newly placed Spawner.
-         */
-        RipLuckyDiner.prototype.activateSpawner = function (thing) {
-            thing.activate(thing);
-        };
-        /**
-         * Activates a WindowDetector by immediately starting its cycle of
-         * checking whether it's in-frame to activate.
-         *
-         * @param thing   A newly placed WindowDetector.
-         */
-        RipLuckyDiner.prototype.spawnWindowDetector = function (thing) {
-            if (!thing.Diner.checkWindowDetector(thing)) {
-                thing.Diner.TimeHandler.addEventInterval(thing.Diner.checkWindowDetector, 7, Infinity, thing);
-            }
-        };
-        /**
-         * Checks if a WindowDetector is within frame, and activates it if so.
-         *
-         * @param thing   An in-game WindowDetector.
-         */
-        RipLuckyDiner.prototype.checkWindowDetector = function (thing) {
-            if (thing.bottom < 0
-                || thing.left > thing.Diner.MapScreener.width
-                || thing.top > thing.Diner.MapScreener.height
-                || thing.right < 0) {
-                return false;
-            }
-            thing.activate(thing);
-            thing.Diner.killNormal(thing);
-            return true;
-        };
-        /**
-         * Activates an AreaSpawner. If it's for a different Area than the current,
-         * that area is spawned in the appropriate direction.
-         *
-         * @param thing   An AreaSpawner to activate.
-         */
-        RipLuckyDiner.prototype.spawnAreaSpawner = function (thing) {
-            var map = thing.Diner.AreaSpawner.getMap(thing.map), area = map.areas[thing.area];
-            if (area === thing.Diner.AreaSpawner.getArea()) {
-                thing.Diner.killNormal(thing);
-                return;
-            }
-            if (area.spawnedBy
-                && area.spawnedBy === thing.Diner.AreaSpawner.getArea().spawnedBy) {
-                thing.Diner.killNormal(thing);
-                return;
-            }
-            area.spawnedBy = thing.Diner.AreaSpawner.getArea().spawnedBy;
-            thing.Diner.activateAreaSpawner(thing, area);
-        };
-        /**
-         * Runs an AreaSpawner to place its Area's Things in the map.
-         *
-         * @param thing   An in-game AreaSpawner.
-         * @param area   The Area associated with thing.
-         */
-        RipLuckyDiner.prototype.activateAreaSpawner = function (thing, area) {
-            var direction = thing.direction, creation = area.creation, Diner = thing.Diner, MapsCreator = Diner.MapsCreator, AreaSpawner = Diner.AreaSpawner, QuadsKeeper = Diner.QuadsKeeper, areaCurrent = AreaSpawner.getArea(), mapCurrent = AreaSpawner.getMap(), prethingsCurrent = AreaSpawner.getPreThings(), left = thing.left + thing.Diner.MapScreener.left, top = thing.top + thing.Diner.MapScreener.top;
-            switch (direction) {
-                case 0:
-                    top -= area.height * thing.Diner.unitsize;
-                    break;
-                case 1:
-                    left += thing.width * thing.Diner.unitsize;
-                    break;
-                case 2:
-                    top += thing.height * thing.Diner.unitsize;
-                    break;
-                case 3:
-                    left -= area.width * thing.Diner.unitsize;
-                    break;
-                default:
-                    throw new Error("Unknown direction: " + direction + ".");
-            }
-            var x = left / Diner.unitsize + (thing.offsetX || 0);
-            var y = top / Diner.unitsize + (thing.offsetY || 0);
-            Diner.expandMapBoundariesForArea(Diner, area, x, y);
-            for (var i = 0; i < creation.length; i += 1) {
-                // A copy of the command must be used, so as to not modify the original 
-                var command = Diner.proliferate({
-                    "noBoundaryStretch": true,
-                    "areaName": area.name,
-                    "mapName": area.map.name
-                }, creation[i]);
-                if (!command.x) {
-                    command.x = x;
-                }
-                else {
-                    command.x += x;
-                }
-                if (!command.y) {
-                    command.y = y;
-                }
-                else {
-                    command.y += y;
-                }
-                // Having an entrance might conflict with previously set Locations
-                if (command.hasOwnProperty("entrance")) {
-                    delete command.entrance;
-                }
-                MapsCreator.analyzePreSwitch(command, prethingsCurrent, areaCurrent, mapCurrent);
-            }
-            AreaSpawner.spawnArea(RipLuckyDiner_1.DirectionSpawns[direction], QuadsKeeper.top / Diner.unitsize, QuadsKeeper.right / Diner.unitsize, QuadsKeeper.bottom / Diner.unitsize, QuadsKeeper.left / Diner.unitsize);
-            area.spawned = true;
-            Diner.killNormal(thing);
-        };
-        /**
          * Expands the MapScreener boundaries for a newly added Area.
          *
          * @param Diner
@@ -2420,31 +2011,6 @@ var RipLuckyDiner;
         };
         /* Memory
         */
-        /**
-         * Saves the positions of all Characters in the game.
-         *
-         * @param Diner
-         */
-        RipLuckyDiner.prototype.saveCharacterPositions = function (Diner) {
-            var characters = Diner.GroupHolder.getGroup("Character");
-            for (var i = 0; i < characters.length; i += 1) {
-                var character = characters[i];
-                var id = character.id;
-                Diner.saveCharacterPosition(Diner, character, id);
-            }
-        };
-        /**
-         * Saves the position of a certain Character.
-         *
-         * @param Diner
-         * @param character   An in-game Character.
-         * @param id   The ID associated with the Character.
-         */
-        RipLuckyDiner.prototype.saveCharacterPosition = function (Diner, character, id) {
-            Diner.StateHolder.addChange(id, "xloc", (character.left + Diner.MapScreener.left) / Diner.unitsize);
-            Diner.StateHolder.addChange(id, "yloc", (character.top + Diner.MapScreener.top) / Diner.unitsize);
-            Diner.StateHolder.addChange(id, "direction", character.direction);
-        };
         /**
          * Pushes and saves the current state of a variable to a stack.
          *
@@ -2479,24 +2045,6 @@ var RipLuckyDiner;
                 throw new Error("No state saved for '" + title + "'.");
             }
             thing[title] = stateHistory.pop();
-        };
-        /**
-         * Clears the data saved in localStorage and saves it in a new object in localStorage
-         * upon a new game being started.
-         */
-        RipLuckyDiner.prototype.clearSavedData = function () {
-            var oldLocalStorage = this.ItemsHolder.exportItems();
-            var collectionKeys = this.ItemsHolder.getItem(this.StateHolder.getPrefix() + "collectionKeys");
-            for (var i = 0; collectionKeys && i < collectionKeys.length; i += 1) {
-                oldLocalStorage[collectionKeys[i]] = this.ItemsHolder.getItem(collectionKeys[i]);
-            }
-            var keys = this.ItemsHolder.getKeys();
-            for (var i = 0; i < keys.length; i += 1) {
-                this.ItemsHolder.removeItem(keys[i]);
-            }
-            this.ItemsHolder.clear();
-            this.ItemsHolder.setItem("oldLocalStorage", oldLocalStorage);
-            this.ItemsHolder.saveItem("oldLocalStorage");
         };
         /**
          * Checks to see if oldLocalStorage is defined in localStorage; if that is true and a prior game
@@ -2537,10 +2085,8 @@ var RipLuckyDiner;
                 name = this.AreaSpawner.getMapName();
             }
             var map = this.AreaSpawner.setMap(name);
-            this.ModAttacher.fireEvent("onPreSetMap", map);
             this.NumberMaker.resetFromSeed(map.seed);
             this.InputWriter.restartHistory();
-            this.ModAttacher.fireEvent("onSetMap", map);
             this.setLocation(location
                 || map.locationDefault
                 || this.settings.maps.locationDefault, noEntrance);
@@ -2570,7 +2116,6 @@ var RipLuckyDiner;
                 "name": name,
                 "timestamp": new Date().getTime()
             };
-            this.ModAttacher.fireEvent("onPreSetLocation", location);
             this.PixelDrawer.setBackground(this.AreaSpawner.getArea().background);
             this.StateHolder.setCollection(location.area.map.name + "::" + location.area.name);
             this.QuadsKeeper.resetQuadrants();
@@ -2582,7 +2127,6 @@ var RipLuckyDiner;
             if (!noEntrance) {
                 location.entry(this, location);
             }
-            this.ModAttacher.fireEvent("onSetLocation", location);
             this.GamesRunner.play();
             this.animateFadeFromColor(this, {
                 "color": "Black"
@@ -2651,44 +2195,6 @@ var RipLuckyDiner;
          */
         RipLuckyDiner.prototype.generateThingsByIdContainer = function () {
             return {};
-        };
-        /**
-         * Analyzes a PreThing to be placed in one of the
-         * cardinal directions of the current Map's boundaries
-         * (just outside of the current Area).
-         *
-         * @param prething   A PreThing whose Thing is to be added to the game.
-         * @param direction   The cardinal direction the Character is facing.
-         * @remarks Direction is taken in by the .forEach call as the index.
-         */
-        RipLuckyDiner.prototype.mapAddAfter = function (prething, direction) {
-            var MapsCreator = this.MapsCreator, AreaSpawner = this.AreaSpawner, prethings = AreaSpawner.getPreThings(), area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), boundaries = this.AreaSpawner.getArea().boundaries;
-            prething.direction = direction;
-            switch (direction) {
-                case 0:
-                    prething.x = boundaries.left;
-                    prething.y = boundaries.top - 8;
-                    prething.width = boundaries.right - boundaries.left;
-                    break;
-                case 1:
-                    prething.x = boundaries.right;
-                    prething.y = boundaries.top;
-                    prething.height = boundaries.bottom - boundaries.top;
-                    break;
-                case 2:
-                    prething.x = boundaries.left;
-                    prething.y = boundaries.bottom;
-                    prething.width = boundaries.right - boundaries.left;
-                    break;
-                case 3:
-                    prething.x = boundaries.left - 8;
-                    prething.y = boundaries.top;
-                    prething.height = boundaries.bottom - boundaries.top;
-                    break;
-                default:
-                    throw new Error("Unknown direction: " + direction + ".");
-            }
-            MapsCreator.analyzePreSwitch(prething, prethings, area, map);
         };
         /* Map entrances
         */
@@ -2800,18 +2306,6 @@ var RipLuckyDiner;
                 Diner.ScenePlayer.playRoutine(location.routine);
             }
         };
-        /**
-         * Map entrace Function used when player is added to the Map at the beginning
-         * of play. Retrieves Character position from the previous save state.
-         *
-         * @param Diner
-         */
-        RipLuckyDiner.prototype.mapEntranceResume = function (Diner) {
-            var savedInfo = Diner.StateHolder.getChanges("player") || {};
-            Diner.addPlayer(savedInfo.xloc || 0, savedInfo.yloc || 0, true);
-            Diner.animateCharacterSetDirection(Diner.player, savedInfo.direction || Direction.Top);
-            Diner.centerMapScreen(Diner);
-        };
         /* Cutscenes
         */
         /**
@@ -2889,49 +2383,6 @@ var RipLuckyDiner;
             }
             return false;
         };
-        /**
-         * Function to add a stackable item to an Array. If it already exists,
-         * the Function increases its value by count. Otherwise, it adds a new item
-         * to the Array.
-         *
-         * @param array   The Array containing the stackable items.
-         * @param title   The name of the stackable item to be added.
-         * @param count   The number of these stackable items.
-         * @param keyTitle   The key associated with the item's name, such as "item".
-         * @param keyCount   The key associated with the item's count, such as "amount".
-         * @returns Whether the stackable item was newly added.
-         */
-        RipLuckyDiner.prototype.combineArrayMembers = function (array, title, count, keyTitle, keyCount) {
-            for (var i = 0; i < array.length; i += 1) {
-                if (array[i][keyTitle] === title) {
-                    array[i][keyCount] += count;
-                    return false;
-                }
-            }
-            var object = {};
-            object[keyTitle] = title;
-            object[keyCount] = count;
-            array.push(object);
-            return true;
-        };
-        /**
-         * Displays a message to the user.
-         *
-         * @param thing   The Thing that triggered the error.
-         * @param message   The message to be displayed.
-         */
-        RipLuckyDiner.prototype.displayMessage = function (thing, message) {
-            if (thing.Diner.MenuGrapher.getActiveMenu()) {
-                return;
-            }
-            thing.Diner.MenuGrapher.createMenu("GeneralText", {
-                "deleteOnFinish": true
-            });
-            thing.Diner.MenuGrapher.addMenuDialog("GeneralText", [
-                message
-            ]);
-            thing.Diner.MenuGrapher.setActiveMenu("GeneralText");
-        };
         // For the sake of reset functions, constants are stored as members of the 
         // RipLuckyDiner Function itself - this allows prototype setters to use 
         // them regardless of whether the prototype has been instantiated yet.
@@ -2942,17 +2393,13 @@ var RipLuckyDiner;
             "audio": undefined,
             "collisions": undefined,
             "devices": undefined,
-            "editor": undefined,
-            "generator": undefined,
             "groups": undefined,
             "events": undefined,
-            "help": undefined,
             "items": undefined,
             "input": undefined,
             "maps": undefined,
             "math": undefined,
             "menus": undefined,
-            "mods": undefined,
             "objects": undefined,
             "quadrants": undefined,
             "renderer": undefined,

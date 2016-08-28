@@ -626,36 +626,6 @@ declare module RipLuckyDiner {
         distance: number;
 
         /**
-         * A Character walking directly behind this as a follower.
-         */
-        follower?: ICharacter;
-
-        /**
-         * A Character this is walking directly behind as a follower.
-         */
-        following?: ICharacter;
-
-        /**
-         * The time cycle keeping this behind the Character it's following. 
-         */
-        followingLoop?: TimeHandlr.ITimeEvent;
-
-        /**
-         * An item to give after a dialog is first initiated.
-         */
-        gift?: string;
-
-        /**
-         * A grass Scenery partially covering this while walking through a grass area.
-         */
-        grass?: IGrass;
-
-        /**
-         * How high the grass Scenery should be.
-         */
-        heightGrass?: number;
-
-        /**
          * A scratch variable for height, such as when behind grass.
          */
         heightOld?: number;
@@ -858,17 +828,6 @@ declare module RipLuckyDiner {
          * Whether the user is currently indicating to go to the left.
          */
         3: boolean;
-    }
-
-    /**
-     * A Grass Thing.
-     */
-    export interface IGrass extends IThing {
-        /**
-         * How likely this is to trigger a grass encounter in the doesGrassEncounterHappen
-         * equation, as a Number in [0, 187.5].
-         */
-        rarity: number;
     }
 
     /**

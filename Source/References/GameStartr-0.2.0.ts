@@ -8,11 +8,9 @@
 /// <reference path="GroupHoldr-0.2.1.ts" />
 /// <reference path="InputWritr-0.2.0.ts" />
 /// <reference path="ItemsHoldr-0.2.1.ts" />
-/// <reference path="LevelEditr-0.2.0.ts" />
 /// <reference path="MapsCreatr-0.2.1.ts" />
 /// <reference path="MapScreenr-0.2.1.ts" />
 /// <reference path="MathDecidr-0.2.0.ts" />
-/// <reference path="ModAttachr-0.2.2.ts" />
 /// <reference path="NumberMakr-0.2.2.ts" />
 /// <reference path="ObjectMakr-0.2.2.ts" />
 /// <reference path="PixelDrawr-0.2.0.ts" />
@@ -23,10 +21,7 @@
 /// <reference path="ThingHittr-0.2.0.ts" />
 /// <reference path="TimeHandlr-0.2.0.ts" />
 /// <reference path="TouchPassr-0.2.0.ts" />
-/// <reference path="UsageHelpr-0.2.0.ts" />
 /// <reference path="UserWrappr-0.2.0.ts" />
-/// <reference path="WorldSeedr-0.2.0.ts" />
-/// <reference path="js_beautify.ts" />
 
 declare module GameStartr {
     /**
@@ -93,13 +88,6 @@ declare module GameStartr {
         resetTimed?: boolean;
 
         /**
-         * Options for mods that, if true, should be immediately enabled.
-         */
-        mods?: {
-            [i: string]: boolean;
-        };
-
-        /**
          * Any additional styles that should be added to the page immediately.
          */
         style?: IPageStyles;
@@ -125,16 +113,6 @@ declare module GameStartr {
         devices: IDeviceLayrCustoms;
 
         /**
-         * Settings regarding the level editor, particularly for an ILevelEditr.
-         */
-        editor: ILevelEditrCustoms;
-
-        /**
-         * Settings regarding map generation, particularly for an IWorldSeedr.
-         */
-        generator: IWorldSeedrCustoms;
-
-        /**
          * Settings regarding in-memory Thing groups, particularly for an IGroupHoldr.
          */
         groups: IGroupHoldrCustoms;
@@ -143,11 +121,6 @@ declare module GameStartr {
          * Settings regarding timed events, particularly for an ITimeHandlr.
          */
         events: ITimeHandlrCustoms;
-
-        /**
-         * Settings regarding help text, particularly for an IUsageHelpr.
-         */
-        help: IUsageHelprCustoms;
 
         /**
          * Settings regarding key and mouse inputs, particularly for an IInputWritr.
@@ -164,11 +137,6 @@ declare module GameStartr {
          * Settings regarding computations, particularly for an IMathDecidr.
          */
         math: IMathDecidrCustoms;
-
-        /**
-         * Settings regarding mods, particularly for an IModAttachr.
-         */
-        mods: IModAttachrCustoms;
 
         /**
          * Settings regarding in-game object generation, particularly for an IObjectMakr.
@@ -330,52 +298,6 @@ declare module GameStartr {
     }
 
     /**
-     * Settings regarding the level editor, particularly for an ILevelEditr.
-     */
-    export interface ILevelEditrCustoms extends IGameStartrSettingsObject {
-        /**
-         * What size grid placed Things should snap to.
-         */
-        blocksize?: number;
-
-        /**
-         * A JSON representation of the default map.
-         */
-        mapDefault: MapsCreatr.IMapsCreatrMapRaw;
-
-        /**
-         * The default setting for maps.
-         */
-        mapSettingDefault: string;
-
-        /**
-         * The default entry method for maps.
-         */
-        mapEntryDefault: string;
-
-        /**
-         * Descriptions of Things that may be placed, within their groups.
-         */
-        prethings: {
-            [i: string]: {
-                [i: string]: any;
-            }
-        };
-
-        /**
-         * Names of groups that Things may be in.
-         */
-        thingGroups: string[];
-        thingKeys: string[];
-        macros: {
-            [i: string]: {
-                description: string;
-                options: any;
-            }
-        };
-    }
-
-    /**
      * Settings regarding maps, particularly for AreaSpawnr, MapScreenr,
      * and MapsCreatr.
      */
@@ -489,21 +411,6 @@ declare module GameStartr {
      * Settings regarding computations, particularly for an IMathDecidr.
      */
     export interface IMathDecidrCustoms extends IGameStartrSettingsObject, MathDecidr.IMathDecidrSettings { }
-
-    /**
-     * Settings regarding mods, particularly for an IModAttachr.
-     */
-    export interface IModAttachrCustoms extends IGameStartrSettingsObject {
-        /**
-         * Whether mod statuses should be stored locally by default.
-         */
-        storeLocally?: boolean;
-
-        /**
-         * Descriptions of available mods.
-         */
-        mods: ModAttachr.IModAttachrMod[];
-    }
 
     /**
      * Settings regarding Thing sprite drawing, particularly for an IPixelRendr.
@@ -650,29 +557,14 @@ declare module GameStartr {
     export interface ITouchPassrCustoms extends IGameStartrSettingsObject, TouchPassr.ITouchPassrSettings { }
 
     /**
-     * Settings regarding help text, particularly for an IUsageHelpr.
-     */
-    export interface IUsageHelprCustoms extends IGameStartrSettingsObject, UsageHelpr.IUsageHelprSettings { }
-
-    /**
      * Settings regarding the visible interface, particularly for an IUserWrappr.
      */
     export interface IUserWrapprCustoms extends IGameStartrSettingsObject { }
 
     /**
-     * Settings regarding map generation, particularly for an IWorldSeedr.
-     */
-    export interface IWorldSeedrCustoms extends IGameStartrSettingsObject {
-        /**
-         * The possibilities that can appear in random maps.
-         */
-        possibilities: WorldSeedr.IPossibilityContainer;
-    }
-
-    /**
      * A standard in-game thing, with size, velocity, position, and other information.
      */
-    export interface IThing extends EightBittr.IThing, LevelEditr.IThing, QuadsKeepr.IThing {
+    export interface IThing extends EightBittr.IThing, MapsCreatr.IThing, PixelDrawr.IThing, QuadsKeepr.IThing {
         /**
          * The parent IGameStartr controlling this Thing.
          */
@@ -888,11 +780,6 @@ declare module GameStartr {
         ItemsHolder: ItemsHoldr.IItemsHoldr;
 
         /**
-         * The level editor manager.
-         */
-        LevelEditor: LevelEditr.ILevelEditr;
-
-        /**
          * A typed MersenneTwister, which is a state-based random number generator.
          * Options exist for changing or randomizing state and producing random
          * booleans, integers, and real numbers.
@@ -918,12 +805,6 @@ declare module GameStartr {
          * to a set of constant values.
          */
         MathDecider: MathDecidr.IMathDecidr;
-
-        /**
-         * An addon for for extensible modding functionality. "Mods" register triggers
-         * such as "onModEnable" or "onReset" that can be triggered during gameplay.
-         */
-        ModAttacher: ModAttachr.IModAttachr;
 
         /**
          * An factory for JavaScript classes that automates the process of 
@@ -980,21 +861,10 @@ declare module GameStartr {
         TouchPasser: TouchPassr.ITouchPassr;
 
         /**
-         * A simple interactive text-based assistant to demonstrate common API uses.
-         */
-        UsageHelper: UsageHelpr.IUsageHelpr;
-
-        /**
          * A user interface manager made to work on top of GameStartr implementations
          * and provide a configurable HTML display of options.
          */
         UserWrapper: UserWrappr.IUserWrappr;
-
-        /**
-         * A randomization utility to automate random, recursive generation of
-         * possibilities based on position and probability schemas. 
-         */
-        WorldSeeder: WorldSeedr.IWorldSeedr;
 
         /**
          * Resets the GameStartr by calling the parent EightBittr.prototype.reset.
@@ -1012,14 +882,6 @@ declare module GameStartr {
          * @param customs   Any optional custom settings.
          */
         resetTimed(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-
-        /**
-         * Sets this.UsageHelper.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetUsageHelper(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ObjectMaker.
@@ -1161,22 +1023,6 @@ declare module GameStartr {
         resetTouchPasser(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
-         * Sets this.LevelEditor.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetLevelEditor(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-
-        /**
-         * Sets this.WorldSeeder.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetWorldSeeder(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-
-        /**
          * Sets this.ScenePlayer.
          *
          * @param GameStarter
@@ -1191,23 +1037,6 @@ declare module GameStartr {
          * @param customs   Any optional custom settings.
          */
         resetMathDecider(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-
-        /**
-         * Sets this.ModAttacher.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetModAttacher(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-
-        /**
-         * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
-         * is fired.
-         *
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        startModAttacher(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Resets the parent HTML container. Width and height are set by customs,
@@ -1300,15 +1129,6 @@ declare module GameStartr {
          * @param attributes   A lookup of attributes that may be added to the Thing's class.
          */
         thingProcessAttributes(thing: IThing, attributes: { [i: string]: string; }): void;
-
-        /**
-         * Runs through commands generated by a WorldSeedr and evaluates all of
-         * to create PreThings via MapsCreator.analyzePreSwitch.
-         *
-         * @param GameStarter
-         * @param generatedCommands   Commands generated by WorldSeedr.generateFull.
-         */
-        mapPlaceRandomCommands(GameStarter: IGameStartr, generatedCommands: WorldSeedr.ICommand[]): void;
 
         /**
          * Triggered Function for when the game is unpaused. Music resumes, and
@@ -1779,11 +1599,6 @@ module GameStartr {
         public ItemsHolder: ItemsHoldr.IItemsHoldr;
 
         /**
-         * The level editor manager.
-         */
-        public LevelEditor: LevelEditr.ILevelEditr;
-
-        /**
          * A typed MersenneTwister, which is a state-based random number generator.
          * Options exist for changing or randomizing state and producing random
          * booleans, integers, and real numbers.
@@ -1809,12 +1624,6 @@ module GameStartr {
          * to a set of constant values.
          */
         public MathDecider: MathDecidr.IMathDecidr;
-
-        /**
-         * An addon for for extensible modding functionality. "Mods" register triggers
-         * such as "onModEnable" or "onReset" that can be triggered during gameplay.
-         */
-        public ModAttacher: ModAttachr.IModAttachr;
 
         /**
          * An factory for JavaScript classes that automates the process of 
@@ -1871,21 +1680,10 @@ module GameStartr {
         public TouchPasser: TouchPassr.ITouchPassr;
 
         /**
-         * A simple interactive text-based assistant to demonstrate common API uses.
-         */
-        public UsageHelper: UsageHelpr.IUsageHelpr;
-
-        /**
          * A user interface manager made to work on top of GameStartr implementations
          * and provide a configurable HTML display of options.
          */
         public UserWrapper: UserWrappr.IUserWrappr;
-
-        /**
-         * A randomization utility to automate random, recursive generation of
-         * possibilities based on position and probability schemas. 
-         */
-        public WorldSeeder: WorldSeedr.IWorldSeedr;
 
         /**
          * Settings for individual modules are stored as sub-Objects here.
@@ -1897,7 +1695,6 @@ module GameStartr {
          * in order of when they should be called.
          */
         public resets: string[] = [
-            "resetUsageHelper",
             "resetObjectMaker",
             "resetPixelRender",
             "resetTimeHandler",
@@ -1915,12 +1712,8 @@ module GameStartr {
             "resetInputWriter",
             "resetDeviceLayer",
             "resetTouchPasser",
-            "resetLevelEditor",
-            "resetWorldSeeder",
             "resetScenePlayer",
             "resetMathDecider",
-            "resetModAttacher",
-            "startModAttacher",
             "resetContainer"
         ];
 
@@ -1985,16 +1778,6 @@ module GameStartr {
          */
         resetTimed(GameStarter: GameStartr, settings: IGameStartrSettings): void {
             super.resetTimed(GameStarter, GameStarter.resets, settings);
-        }
-
-        /**
-         * Sets this.UsageHelper.
-         * 
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetUsageHelper(GameStarter: GameStartr, settings: IGameStartrSettings): void {
-            GameStarter.UsageHelper = new UsageHelpr.UsageHelpr(GameStarter.settings.help);
         }
 
         /**
@@ -2286,38 +2069,6 @@ module GameStartr {
         }
 
         /**
-         * Sets this.LevelEditor.
-         * 
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetLevelEditor(GameStarter: GameStartr, settings: IGameStartrSettings): void {
-            GameStarter.LevelEditor = new LevelEditr.LevelEditr(
-                GameStarter.proliferate(
-                    {
-                        "GameStarter": GameStarter,
-                        "beautifier": js_beautify
-                    },
-                    GameStarter.settings.editor));
-        }
-
-        /**
-         * Sets this.WorldSeeder.
-         * 
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetWorldSeeder(GameStarter: GameStartr, settings: IGameStartrSettings): void {
-            GameStarter.WorldSeeder = new WorldSeedr.WorldSeedr(
-                GameStarter.proliferate(
-                    {
-                        "random": GameStarter.NumberMaker.random.bind(GameStarter.NumberMaker),
-                        "onPlacement": GameStarter.mapPlaceRandomCommands.bind(GameStarter, GameStarter)
-                    },
-                    GameStarter.settings.generator));
-        }
-
-        /**
          * Sets this.ScenePlayer.
          * 
          * @param GameStarter
@@ -2340,44 +2091,6 @@ module GameStartr {
          */
         resetMathDecider(GameStarter: GameStartr, settings: IGameStartrSettings): void {
             GameStarter.MathDecider = new MathDecidr.MathDecidr(GameStarter.settings.math);
-        }
-
-        /**
-         * Sets this.ModAttacher.
-         * 
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        resetModAttacher(GameStarter: GameStartr, settings: IGameStartrSettings): void {
-            GameStarter.ModAttacher = new ModAttachr.ModAttachr(
-                GameStarter.proliferate(
-                    {
-                        "scopeDefault": GameStarter,
-                        "ItemsHoldr": GameStarter.ItemsHolder
-                    },
-                    GameStarter.settings.mods));
-        }
-
-        /** 
-         * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
-         * is fired.
-         * 
-         * @param GameStarter
-         * @param customs   Any optional custom settings.
-         */
-        startModAttacher(GameStarter: GameStartr, settings: IGameStartrSettings): void {
-            var mods: { [i: string]: boolean } = settings.mods,
-                i: string;
-
-            if (mods) {
-                for (i in mods) {
-                    if (mods.hasOwnProperty(i) && mods[i]) {
-                        GameStarter.ModAttacher.enableMod(i);
-                    }
-                }
-            }
-
-            GameStarter.ModAttacher.fireEvent("onReady", GameStarter, GameStarter);
         }
 
         /**
@@ -2538,8 +2251,6 @@ module GameStartr {
                 thing.onThingAdded(thing);
             }
 
-            thing.GameStarter.ModAttacher.fireEvent("onAddThing", thing, left, top);
-
             return thing;
         }
 
@@ -2636,9 +2347,6 @@ module GameStartr {
             if (thing.flipVert) {
                 thing.GameStarter.flipVert(thing);
             }
-
-            // Mods!
-            thing.GameStarter.ModAttacher.fireEvent("onThingMake", thing.GameStarter, thing, title, settings, defaults);
         }
 
         /**
@@ -2670,40 +2378,6 @@ module GameStartr {
         }
 
         /**
-         * Runs through commands generated by a WorldSeedr and evaluates all of 
-         * to create PreThings via MapsCreator.analyzePreSwitch. 
-         * 
-         * @param GameStarter
-         * @param generatedCommands   Commands generated by WorldSeedr.generateFull.
-         */
-        mapPlaceRandomCommands(GameStarter: GameStartr, generatedCommands: WorldSeedr.ICommand[]): void {
-            var MapsCreator: MapsCreatr.IMapsCreatr = GameStarter.MapsCreator,
-                AreaSpawner: AreaSpawnr.IAreaSpawnr = GameStarter.AreaSpawner,
-                prethings: MapsCreatr.IPreThingsContainers = AreaSpawner.getPreThings(),
-                area: MapsCreatr.IMapsCreatrArea = AreaSpawner.getArea(),
-                map: MapsCreatr.IMapsCreatrMap = AreaSpawner.getMap(),
-                command: WorldSeedr.ICommand,
-                output: any,
-                i: number;
-
-            for (i = 0; i < generatedCommands.length; i += 1) {
-                command = generatedCommands[i];
-
-                output = {
-                    "thing": command.title,
-                    "x": command.left,
-                    "y": command.top
-                };
-
-                if (command.arguments) {
-                    GameStarter.proliferateHard(output, command.arguments, true);
-                }
-
-                MapsCreator.analyzePreSwitch(output, prethings, area, map);
-            }
-        }
-
-        /**
          * Triggered Function for when the game is unpaused. Music resumes, and
          * the mod event is fired.
          * 
@@ -2711,7 +2385,6 @@ module GameStartr {
          */
         onGamePlay(GameStarter: GameStartr): void {
             GameStarter.AudioPlayer.resumeAll();
-            GameStarter.ModAttacher.fireEvent("onGamePlay");
         }
 
         /**
@@ -2722,7 +2395,6 @@ module GameStartr {
          */
         onGamePause(GameStarter: GameStartr): void {
             GameStarter.AudioPlayer.pauseAll();
-            GameStarter.ModAttacher.fireEvent("onGamePause");
         }
 
         /**
@@ -2739,7 +2411,7 @@ module GameStartr {
          * Generic Function to start the game. Nothing actually happens here.
          */
         gameStart(): void {
-            this.ModAttacher.fireEvent("onGameStart");
+            // ...
         }
 
 

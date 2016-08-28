@@ -17,7 +17,6 @@ var RipLuckyDiner;
             "thingsById": RipLuckyDiner.RipLuckyDiner.prototype.generateThingsByIdContainer
         },
         "onSpawn": RipLuckyDiner.RipLuckyDiner.prototype.addPreThing,
-        "afterAdd": RipLuckyDiner.RipLuckyDiner.prototype.mapAddAfter,
         "macros": {},
         "entrances": {
             "Blank": RipLuckyDiner.RipLuckyDiner.prototype.mapEntranceBlank,

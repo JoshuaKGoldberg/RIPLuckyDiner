@@ -19,7 +19,6 @@ module RipLuckyDiner {
             "thingsById": RipLuckyDiner.prototype.generateThingsByIdContainer
         },
         "onSpawn": RipLuckyDiner.prototype.addPreThing,
-        "afterAdd": RipLuckyDiner.prototype.mapAddAfter,
         "macros": {},
         "entrances": {
             "Blank": RipLuckyDiner.prototype.mapEntranceBlank,
