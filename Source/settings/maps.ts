@@ -139,7 +139,7 @@ module RipLuckyDiner {
 
                             // Best people on Earth
                             { "thing": "BugCatcher", "x": 32, "y": 40, "id": "Justin", "dialog": "If you can't dazzle them with brilliance, baffle them with bullshit.", "roaming": true },
-                            { "thing": "Lass", "x": 128, "y": 48, "id": "Chana", "dialog": "???", "roaming": true },
+                            { "thing": "Lass", "x": 128, "y": 48, "id": "Chana", "dialog": "No worries!", "roaming": true },
 
                             // Also this guy
                             { "thing": "Scientist", "x": 40, "y": 80, "sitting": true, "direction": 1, "directionPreferred": 1, "id": "Josh", "dialog": "It's 5am, probably time to switch to decaf..." },

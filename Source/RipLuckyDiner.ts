@@ -1090,255 +1090,6 @@ module RipLuckyDiner {
         }
 
         /**
-         * Slides a Thing across the screen horizontally over time.
-         * 
-         * @param thing   A Thing to slide across the screen.
-         * @param change   How far to move each tick.
-         * @param goal   A midX location to stop sliding at.
-         * @param speed   How many ticks between movements.
-         * @param onCompletion   A callback for when the Thing reaches the goal.
-         * @returns The in-progress TimeEvent.
-         */
-        animateSlideHorizontal(
-            thing: IThing,
-            change: number,
-            goal: number,
-            speed: number,
-            onCompletion?: (thing: IThing) => void): void {
-            thing.Diner.shiftHoriz(thing, change);
-
-            if (change > 0) {
-                if (thing.Diner.getMidX(thing) >= goal) {
-                    thing.Diner.setMidX(thing, goal);
-                    if (onCompletion) {
-                        onCompletion(thing);
-                    }
-                    return;
-                }
-            } else {
-                if (thing.Diner.getMidX(thing) <= goal) {
-                    thing.Diner.setMidX(thing, goal);
-                    if (onCompletion) {
-                        onCompletion(thing);
-                    }
-                    return;
-                }
-            }
-
-            thing.Diner.TimeHandler.addEvent(
-                thing.Diner.animateSlideHorizontal,
-                speed,
-                thing,
-                change,
-                goal,
-                speed,
-                onCompletion);
-        }
-
-        /**
-         * Slides a Thing across the screen vertically over time.
-         * 
-         * @param thing   A Thing to slide across the screen.
-         * @param change   How far to move each tick.
-         * @param goal   A midY location to stop sliding at.
-         * @param speed   How many ticks between movements.
-         * @param onCompletion   A callback for when the Thing reaches the goal.
-         * @returns The in-progress TimeEvent.
-         */
-        animateSlideVertical(
-            thing: IThing,
-            change: number,
-            goal: number,
-            speed: number,
-            onCompletion?: (thing: IThing) => void): void {
-            thing.Diner.shiftVert(thing, change);
-
-            if (change > 0) {
-                if (thing.Diner.getMidY(thing) >= goal) {
-                    thing.Diner.setMidY(thing, goal);
-                    if (onCompletion) {
-                        onCompletion(thing);
-                    }
-                    return;
-                }
-            } else {
-                if (thing.Diner.getMidY(thing) <= goal) {
-                    thing.Diner.setMidY(thing, goal);
-                    if (onCompletion) {
-                        onCompletion(thing);
-                    }
-                    return;
-                }
-            }
-
-            thing.Diner.TimeHandler.addEvent(
-                thing.Diner.animateSlideVertical,
-                speed,
-                thing,
-                change,
-                goal,
-                speed,
-                onCompletion);
-        }
-
-        /**
-         * Creates and positions a set of four Things around a point.
-         * 
-         * @param Diner
-         * @param x   The horizontal value of the point.
-         * @param y   The vertical value of the point.
-         * @param title   A title for each Thing to create.
-         * @param settings   Additional settings for each Thing.
-         * @param groupType   Which group to move the Things into, if any.
-         * @returns The four created Things.
-         */
-        animateThingCorners(
-            Diner: RipLuckyDiner,
-            x: number,
-            y: number,
-            title: string,
-            settings: any,
-            groupType?: string): [IThing, IThing, IThing, IThing] {
-            let things: IThing[] = [],
-                i: number;
-
-            for (i = 0; i < 4; i += 1) {
-                things.push(Diner.addThing([title, settings]));
-            }
-
-            if (groupType) {
-                for (i = 0; i < things.length; i += 1) {
-                    Diner.GroupHolder.switchMemberGroup(things[i], things[i].groupType, groupType);
-                }
-            }
-
-            Diner.setLeft(things[0], x);
-            Diner.setLeft(things[1], x);
-
-            Diner.setRight(things[2], x);
-            Diner.setRight(things[3], x);
-
-            Diner.setBottom(things[0], y);
-            Diner.setBottom(things[3], y);
-
-            Diner.setTop(things[1], y);
-            Diner.setTop(things[2], y);
-
-            Diner.flipHoriz(things[0]);
-            Diner.flipHoriz(things[1]);
-
-            Diner.flipVert(things[1]);
-            Diner.flipVert(things[2]);
-
-            return <[IThing, IThing, IThing, IThing]>things;
-        }
-
-        /**
-         * Moves a set of four Things away from a point.
-         * 
-         * @param things   The four Things to move.
-         * @param amount   How far to move each Thing horizontally and vertically.
-         */
-        animateExpandCorners(things: [IThing, IThing, IThing, IThing], amount: number): void {
-            let Diner: RipLuckyDiner = things[0].Diner;
-
-            Diner.shiftHoriz(things[0], amount);
-            Diner.shiftHoriz(things[1], amount);
-            Diner.shiftHoriz(things[2], -amount);
-            Diner.shiftHoriz(things[3], -amount);
-
-            Diner.shiftVert(things[0], -amount);
-            Diner.shiftVert(things[1], amount);
-            Diner.shiftVert(things[2], amount);
-            Diner.shiftVert(things[3], -amount);
-        }
-
-        /**
-         * Creates a small smoke animation from a point.
-         * 
-         * @param Diner
-         * @param x   The horizontal location of the point.
-         * @param y   The vertical location of the point.
-         * @param callback   A callback for when the animation is done.
-         */
-        animateSmokeSmall(Diner: RipLuckyDiner, x: number, y: number, callback: (thing: IThing) => void): void {
-            let things: IThing[] = Diner.animateThingCorners(Diner, x, y, "SmokeSmall", undefined, "Text");
-
-            Diner.TimeHandler.addEvent(things.forEach.bind(things), 7, Diner.killNormal);
-
-            Diner.TimeHandler.addEvent(Diner.animateSmokeMedium, 7, Diner, x, y, callback);
-        }
-
-        /**
-         * Creates a medium-sized smoke animation from a point.
-         * 
-         * @param Diner
-         * @param x   The horizontal location of the point.
-         * @param y   The vertical location of the point.
-         * @param callback   A callback for when the animation is done.
-         */
-        animateSmokeMedium(Diner: RipLuckyDiner, x: number, y: number, callback: (thing: IThing) => void): void {
-            let things: IThing[] = Diner.animateThingCorners(Diner, x, y, "SmokeMedium", undefined, "Text");
-
-            Diner.TimeHandler.addEvent(Diner.animateExpandCorners, 7, things, Diner.unitsize);
-
-            Diner.TimeHandler.addEvent(things.forEach.bind(things), 14, Diner.killNormal);
-
-            Diner.TimeHandler.addEvent(Diner.animateSmokeLarge, 14, Diner, x, y, callback);
-        }
-
-        /**
-         * Creates a large smoke animation from a point.
-         * 
-         * @param Diner
-         * @param x   The horizontal location of the point.
-         * @param y   The vertical location of the point.
-         * @param callback   A callback for when the animation is done.
-         */
-        animateSmokeLarge(Diner: RipLuckyDiner, x: number, y: number, callback: (thing: IThing) => void): void {
-            let things: [IThing, IThing, IThing, IThing] = Diner.animateThingCorners(Diner, x, y, "SmokeLarge", undefined, "Text");
-
-            Diner.animateExpandCorners(things, Diner.unitsize * 2.5);
-
-            Diner.TimeHandler.addEvent(
-                Diner.animateExpandCorners,
-                7,
-                things,
-                Diner.unitsize * 2);
-
-            Diner.TimeHandler.addEvent(things.forEach.bind(things), 21, Diner.killNormal);
-
-            if (callback) {
-                Diner.TimeHandler.addEvent(callback, 21);
-            }
-        }
-
-        /**
-         * Animates an exclamation mark above a Thing.
-         * 
-         * @param thing   A Thing to show the exclamation over.
-         * @param timeout   How long to keep the exclamation (by default, 140).
-         * @param callback   A callback for when the exclamation is removed.
-         * @returns The exclamation Thing.
-         */
-        animateExclamation(thing: IThing, timeout?: number, callback?: () => void): IThing {
-            let exclamation: IThing = thing.Diner.addThing("Exclamation");
-
-            timeout = timeout || 140;
-
-            thing.Diner.setMidXObj(exclamation, thing);
-            thing.Diner.setBottom(exclamation, thing.top);
-
-            thing.Diner.TimeHandler.addEvent(thing.Diner.killNormal, timeout, exclamation);
-
-            if (callback) {
-                thing.Diner.TimeHandler.addEvent(callback, timeout);
-            }
-
-            return exclamation;
-        }
-
-        /**
          * Fades the screen out to a solid color.
          * 
          * @param Diner
@@ -1452,52 +1203,6 @@ module RipLuckyDiner {
                 ((cleartime * interval) | 0) + 1);
         }
 
-        /**
-         * Shakes all Things on the screen back and forth for a little bit.
-         * 
-         * 
-         * @param Diner
-         * @param dx   How far to shift horizontally (by default, 0).
-         * @param dy   How far to shift horizontally (by default, 0).
-         * @param cleartime   How long until the screen is done shaking.
-         * @param interval   How many game upkeeps between movements.
-         * @returns The shaking time event.
-         */
-        animateScreenShake(
-            Diner: RipLuckyDiner,
-            dx: number = 0,
-            dy: number = 0,
-            cleartime: number = 8,
-            interval: number = 8,
-            callback?: TimeHandlr.IEventCallback): TimeHandlr.ITimeEvent {
-            Diner.TimeHandler.addEventInterval(
-                function (): void {
-                    Diner.GroupHolder.callOnAll(Diner, Diner.shiftHoriz, dx);
-                    Diner.GroupHolder.callOnAll(Diner, Diner.shiftVert, dy);
-                },
-                1,
-                cleartime * interval);
-
-            return Diner.TimeHandler.addEvent(
-                function (): void {
-                    dx *= -1;
-                    dy *= -1;
-
-                    Diner.TimeHandler.addEventInterval(
-                        function (): void {
-                            dx *= -1;
-                            dy *= -1;
-                        },
-                        interval,
-                        cleartime);
-
-                    if (callback) {
-                        Diner.TimeHandler.addEvent(callback, interval * cleartime, Diner);
-                    }
-                },
-                (interval / 2) | 0);
-        }
-
 
         /* Character movement animations
         */
@@ -1609,10 +1314,6 @@ module RipLuckyDiner {
                     thing.Diner.animateSwitchFlipOnDirection, repeats, Infinity, thing);
             }
 
-            if (thing.sight) {
-                thing.sightDetector.nocollide = true;
-            }
-
             thing.Diner.TimeHandler.addEventInterval(
                 thing.onWalkingStop, repeats, Infinity, thing, onStop);
 
@@ -1704,11 +1405,6 @@ module RipLuckyDiner {
             }
 
             thing.Diner.animateSnapToGrid(thing);
-
-            if (thing.sight) {
-                thing.sightDetector.nocollide = false;
-                thing.Diner.animatePositionSightDetector(thing);
-            }
 
             if (!onStop) {
                 return true;
@@ -1843,49 +1539,6 @@ module RipLuckyDiner {
                 thing.Diner.unflipHoriz(thing);
             } else {
                 thing.Diner.flipHoriz(thing);
-            }
-        }
-
-        /**
-         * Positions a Character's detector in front of it as its sight.
-         * 
-         * @param thing   A Character that should be able to see.
-         */
-        animatePositionSightDetector(thing: ICharacter): void {
-            let detector: ISightDetector = thing.sightDetector,
-                direction: Direction = thing.direction,
-                sight: number = Number(thing.sight);
-
-            if (detector.direction !== direction) {
-                if (thing.direction % 2 === 0) {
-                    thing.Diner.setWidth(detector, thing.width);
-                    thing.Diner.setHeight(detector, sight * 8);
-                } else {
-                    thing.Diner.setWidth(detector, sight * 8);
-                    thing.Diner.setHeight(detector, thing.height);
-                }
-                detector.direction = direction;
-            }
-
-            switch (direction) {
-                case 0:
-                    thing.Diner.setBottom(detector, thing.top);
-                    thing.Diner.setMidXObj(detector, thing);
-                    break;
-                case 1:
-                    thing.Diner.setLeft(detector, thing.right);
-                    thing.Diner.setMidYObj(detector, thing);
-                    break;
-                case 2:
-                    thing.Diner.setTop(detector, thing.bottom);
-                    thing.Diner.setMidXObj(detector, thing);
-                    break;
-                case 3:
-                    thing.Diner.setRight(detector, thing.left);
-                    thing.Diner.setMidYObj(detector, thing);
-                    break;
-                default:
-                    throw new Error("Unknown direction: " + direction + ".");
             }
         }
 
@@ -2201,79 +1854,6 @@ module RipLuckyDiner {
         */
 
         /**
-         * Activates a Detector to trigger a cutscene and/or routine.
-         * 
-         * @param thing   A Player triggering other.
-         * @param other   A Detector triggered by thing.
-         */
-        activateCutsceneTriggerer(thing: IPlayer, other: IDetector): void {
-            if (!other.alive || thing.collidedTrigger === other) {
-                return;
-            }
-
-            thing.collidedTrigger = other;
-            thing.Diner.animatePlayerDialogFreeze(thing);
-
-            if (!other.keepAlive) {
-                other.alive = false;
-
-                if (other.id.indexOf("Anonymous") !== -1) {
-                    console.warn("Deleting anonymous CutsceneTriggerer:", other.id);
-                }
-
-                thing.Diner.StateHolder.addChange(other.id, "alive", false);
-                thing.Diner.killNormal(other);
-            }
-
-            if (other.cutscene) {
-                thing.Diner.ScenePlayer.startCutscene(other.cutscene, {
-                    "player": thing,
-                    "triggerer": other
-                });
-            }
-
-            if (other.routine) {
-                thing.Diner.ScenePlayer.playRoutine(other.routine);
-            }
-        }
-
-        /**
-         * Activates a Detector to play an audio theme.
-         * 
-         * @param thing   A Player triggering other.
-         * @param other   A Detector triggered by thing.
-         */
-        activateThemePlayer(thing: IPlayer, other: IThemeDetector): void {
-            if (!thing.player || thing.Diner.AudioPlayer.getThemeName() === other.theme) {
-                return;
-            }
-
-            thing.Diner.AudioPlayer.playTheme(other.theme);
-        }
-
-        /**
-         * Activates a Detector to play a cutscene, and potentially a dialog.
-         * 
-         * @param thing   A Player triggering other.
-         * @param other   A Detector triggered by thing.
-         */
-        activateCutsceneResponder(thing: ICharacter, other: IDetector): void {
-            if (!thing.player || !other.alive) {
-                return;
-            }
-
-            if (other.dialog) {
-                thing.Diner.activateMenuTriggerer(thing, other);
-                return;
-            }
-
-            thing.Diner.ScenePlayer.startCutscene(other.cutscene, {
-                "player": thing,
-                "triggerer": other
-            });
-        }
-
-        /**
          * Activates a Detector to open a menu, and potentially a dialog.
          * 
          * @param thing   A Character triggering other.
@@ -2326,30 +1906,6 @@ module RipLuckyDiner {
             }
 
             thing.Diner.MenuGrapher.setActiveMenu(name);
-        }
-
-        /**
-         * Activates a Character's sight detector for when another Character walks
-         * into it.
-         * 
-         * @param thing   A Character triggering other.
-         * @param other   A sight detector being triggered by thing.
-         */
-        activateSightDetector(thing: ICharacter, other: ISightDetector): void {
-            if (other.viewer.talking) {
-                return;
-            }
-
-            other.viewer.talking = true;
-            other.active = false;
-
-            thing.Diner.MapScreener.blockInputs = true;
-
-            thing.Diner.ScenePlayer.startCutscene("TrainerSpotted", {
-                "player": thing,
-                "sightDetector": other,
-                "triggerer": other.viewer
-            });
         }
 
         /**
@@ -2522,19 +2078,6 @@ module RipLuckyDiner {
          * @param thing   A newly placed Character.
          */
         spawnCharacter(thing: ICharacter): void {
-            if (thing.sight) {
-                thing.sightDetector = <ISightDetector>thing.Diner.addThing(
-                    [
-                        "SightDetector",
-                        {
-                            "direction": thing.direction,
-                            "width": thing.sight * 8
-                        }
-                    ]);
-                thing.sightDetector.viewer = thing;
-                thing.Diner.animatePositionSightDetector(thing);
-            }
-
             if (thing.roaming) {
                 thing.Diner.TimeHandler.addEvent(
                     thing.Diner.activateCharacterRoaming,
@@ -2581,73 +2124,6 @@ module RipLuckyDiner {
             Diner.MapScreener.scrollability = Scrollability.Both;
         }
 
-        /* Memory
-        */
-
-        /**
-         * Pushes and saves the current state of a variable to a stack.
-         * 
-         * @param thing   The Thing, Area, Map, or Location saving its state of a variable.
-         * @param title   Name for the state being saved.
-         * @param value   The values of the variable to be saved.
-         */
-        addStateHistory(thing: IStateSaveable, title: string, value: any): void {
-            if (!thing.state) {
-                thing.state = {};
-            }
-
-            let stateHistory: any[] = thing.state[title];
-            if (stateHistory) {
-                stateHistory.push(value);
-            } else {
-                thing.state[title] = [value];
-            }
-        }
-
-        /**
-         * Updates to the most recently saved state for a variable.
-         * 
-         * @param thing   The Thing having its state restored.
-         * @param title   The name of the state to restore.
-         */
-        popStateHistory(thing: IStateSaveable, title: string): void {
-            if (!thing.state) {
-                throw new Error(`State property is not defined for '${thing}'.`);
-            }
-
-            let stateHistory: any[] = thing.state[title];
-            if (!stateHistory || stateHistory.length === 0) {
-                throw new Error(`No state saved for '${title}'.`);
-            }
-
-            thing[title] = stateHistory.pop();
-        }
-
-        /**
-         * Checks to see if oldLocalStorage is defined in localStorage; if that is true and a prior game
-         * hasn't been saved, the data is restored under localStorage
-         */
-        checkForOldStorageData(): void {
-            if (!this.ItemsHolder.getItem("oldLocalStorage") || this.ItemsHolder.getItem("gameStarted")) {
-                return;
-            }
-
-            let oldLocalStorage: ItemsHoldr.IItems = this.ItemsHolder.getItem("oldLocalStorage");
-            for (let key in oldLocalStorage) {
-                if (!oldLocalStorage.hasOwnProperty(key)) {
-                    continue;
-                }
-
-                if (key.slice(0, "StateHolder".length) === "StateHolder") {
-                    this.StateHolder.setCollection(key.slice(11), oldLocalStorage[key]);
-                } else {
-                    this.ItemsHolder.setItem(key, oldLocalStorage[key]);
-                }
-            }
-
-            this.ItemsHolder.saveAll();
-        }
-
 
         /* Map sets
         */
@@ -2690,7 +2166,6 @@ module RipLuckyDiner {
          *                     be skipped (by default, false).
          */
         setLocation(name: string, noEntrance?: boolean): void {
-
             name = name || "0";
 
             this.AudioPlayer.clearAll();
