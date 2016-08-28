@@ -1,0 +1,34 @@
+{
+  "name": "RipLuckyDiner",
+  "description": "A tribute to the former Lucky Diner in Belltown, Seattle",
+  "version": "0.0.0",
+  "author": {
+    "name": "Josh Goldberg",
+    "email": "joshuakgoldberg@outlook.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:JoshuaKGoldberg/RipLuckyDiner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JoshuaKGoldberg/RipLuckyDiner/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-cssmin": "^0.13.0",
+    "grunt-contrib-htmlmin": "^0.4.0",
+    "grunt-contrib-uglify": "^0.8.1",
+    "grunt-preprocess": "^5.1.0",
+    "grunt-processhtml": "^0.3.13",
+    "grunt-tslint": "^2.4.0",
+    "grunt-typescript": "^0.8.0",
+    "grunt-zip": "^0.17.1",
+    "tslint": "^2.4.5",
+    "typescript": "^1.8.10"
+  }
+}
